@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Grandpa AR 說話版</title>
+    <title>Grandpa AR 點擊旋轉版</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://aframe.io/releases/0.9.2/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.7.5/aframe/build/aframe-ar.js"></script>
@@ -31,16 +31,28 @@
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const grandpa = document.querySelector('#grandpa');
+        let isRotating = false;
+        let rotationInterval;
 
         grandpa.addEventListener('click', () => {
-          const msg = new SpeechSynthesisUtterance('嗨，我是爺爺，準備好冒險了嗎？');
-          msg.lang = 'zh-TW'; // 語言：中文（台灣）
-          msg.pitch = 1;      // 音調
-          msg.rate = 1;       // 語速
-          speechSynthesis.speak(msg);
+          if (!isRotating) {
+            // 啟動旋轉
+            rotationInterval = setInterval(() => {
+              const currentRotation = grandpa.getAttribute('rotation');
+              grandpa.setAttribute('rotation', {
+                x: currentRotation.x,
+                y: currentRotation.y + 2,
+                z: currentRotation.z
+              });
+            }, 50); // 每 50ms 轉動 2 度
+            isRotating = true;
+          } else {
+            // 停止旋轉
+            clearInterval(rotationInterval);
+            isRotating = false;
+          }
         });
       });
     </script>
   </body>
 </html>
-
