@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Grandpa AR 按鈕旋轉</title>
+    <title>Grandpa AR 按鈕旋轉修正版</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://aframe.io/releases/0.9.2/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.7.5/aframe/build/aframe-ar.js"></script>
@@ -19,7 +19,7 @@
   </head>
 
   <body style="margin: 0px; overflow: hidden;">
-    <!-- 按鈕放畫面上 -->
+    <!-- 控制按鈕 -->
     <button id="rotateBtn">讓 Grandpa 旋轉</button>
 
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
@@ -30,39 +30,46 @@
           position="0 0 -2"
           rotation="0 0 0"
           scale="0.5 0.5 0.5"
-          rotate-on-command>
+          rotate-toggle>
         </a-entity>
       </a-marker>
+
       <a-entity camera></a-entity>
     </a-scene>
 
     <script>
-      // A-Frame Component：根據外部 JS 控制是否旋轉
-      AFRAME.registerComponent('rotate-on-command', {
-        schema: { type: 'boolean', default: false },
+      // A-Frame component: 控制旋轉
+      AFRAME.registerComponent('rotate-toggle', {
         init: function () {
-          this.shouldRotate = false;
-          this.el.sceneEl.addEventListener('rotate-grandpa', () => {
-            this.shouldRotate = !this.shouldRotate;
+          this.isRotating = false;
+          this.el.sceneEl.addEventListener('loaded', () => {
+            console.log('Scene loaded');
           });
         },
         tick: function (time, timeDelta) {
-          if (this.shouldRotate) {
+          if (this.isRotating) {
             const rot = this.el.getAttribute('rotation');
-            rot.y += 60 * (timeDelta / 1000); // 每秒 60 度
+            rot.y += 60 * (timeDelta / 1000);
             this.el.setAttribute('rotation', rot);
           }
+        },
+        toggle: function () {
+          this.isRotating = !this.isRotating;
         }
       });
 
-      // 控制按鈕 → 發出事件讓 Grandpa 開始或停止旋轉
+      // 控制按鈕
       document.addEventListener('DOMContentLoaded', () => {
         const btn = document.getElementById('rotateBtn');
-        const scene = document.querySelector('a-scene');
+        const grandpa = document.querySelector('#grandpa');
+
         btn.addEventListener('click', () => {
-          scene.emit('rotate-grandpa');
+          if (grandpa.components['rotate-toggle']) {
+            grandpa.components['rotate-toggle'].toggle();
+          }
         });
       });
     </script>
   </body>
 </html>
+
