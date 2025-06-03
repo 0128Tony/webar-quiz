@@ -6,6 +6,11 @@
     <script src="https://aframe.io/releases/0.9.2/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.7.5/aframe/build/aframe-ar.js"></script>
     <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+
       #rotateBtn {
         position: fixed;
         bottom: 20px;
@@ -15,11 +20,28 @@
         font-size: 16px;
         z-index: 10;
       }
+
+      #dialogBox {
+        position: fixed;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 12px;
+        font-size: 18px;
+        max-width: 80%;
+        text-align: center;
+        z-index: 10;
+        display: none;
+      }
     </style>
   </head>
 
-  <body style="margin: 0; overflow: hidden;">
+  <body>
     <button id="rotateBtn">Rotate Grandpa</button>
+    <div id="dialogBox"></div>
 
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
       <a-marker type="pattern" url="pattern-marker.patt">
@@ -36,30 +58,43 @@
 
     <script>
       let rotating = false;
-
       const grandpa = document.getElementById("grandpa");
       const btn = document.getElementById("rotateBtn");
+      const dialogBox = document.getElementById("dialogBox");
+
+      function speakAndShowText(text) {
+        // 顯示對話框
+        dialogBox.innerText = text;
+        dialogBox.style.display = 'block';
+
+        // 播放語音
+        const message = new SpeechSynthesisUtterance(text);
+        message.lang = "en-US";
+        speechSynthesis.cancel();
+        speechSynthesis.speak(message);
+
+        // 自動隱藏對話框（3秒後）
+        setTimeout(() => {
+          dialogBox.style.display = 'none';
+        }, 3000);
+      }
 
       btn.addEventListener("click", () => {
         rotating = !rotating;
         btn.innerText = rotating ? "Stop Rotating" : "Rotate Grandpa";
 
-        // 播放英文語音
-        const message = new SpeechSynthesisUtterance(
-          rotating ? "I am starting to rotate!" : "I have stopped rotating."
-        );
-        message.lang = "en-US";
+        const message = rotating
+          ? "I am starting to rotate!"
+          : "I have stopped rotating.";
 
-        // Safari 相容性：確保只播放一次
-        window.speechSynthesis.cancel(); 
-        window.speechSynthesis.speak(message);
+        speakAndShowText(message);
       });
 
       AFRAME.registerComponent('manual-rotate', {
         tick: function (time, timeDelta) {
           if (rotating && grandpa) {
             const rot = grandpa.getAttribute('rotation');
-            rot.y += 60 * (timeDelta / 1000); // 每秒轉 60 度
+            rot.y += 60 * (timeDelta / 1000);
             grandpa.setAttribute('rotation', rot);
           }
         }
