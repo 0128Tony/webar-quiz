@@ -1,34 +1,40 @@
-let current = 0;
-let score = 0;
-let questions = [];
 
-async function loadQuiz() {
-  const res = await fetch("quiz.json");
-  questions = await res.json();
-  showQuestion();
-}
+window.addEventListener("DOMContentLoaded", async () => {
+  const questionText = document.getElementById("questionText");
+  const optionButtons = document.getElementById("optionButtons");
 
-function showQuestion() {
-  const q = questions[current];
-  const options = [q.answer, ...q.distractors].sort(() => Math.random() - 0.5);
+  try {
+    const res = await fetch("quiz.json");
+    const data = await res.json();
+    let current = 0;
 
-  document.querySelector("#questionText").setAttribute("text", "value", `第 ${current+1} 題：${q.question}`);
-  options.forEach((opt, i) => {
-    document.querySelectorAll("button")[i].innerText = opt;
-    document.querySelectorAll("button")[i].dataset.correct = (opt === q.answer);
-  });
-}
+    function loadQuestion(index) {
+      const item = data[index];
+      questionText.setAttribute("text", "value", `第 ${index + 1} 題：${item.question}`);
+      optionButtons.innerHTML = "";
+      item.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.onclick = () => {
+          if (opt === item.answer) {
+            alert("✅ 答對了！");
+          } else {
+            alert("❌ 答錯了！");
+          }
+          if (index + 1 < data.length) {
+            loadQuestion(index + 1);
+          } else {
+            alert("🎉 測驗結束！");
+            questionText.setAttribute("text", "value", "測驗完成！");
+            optionButtons.innerHTML = "";
+          }
+        };
+        optionButtons.appendChild(btn);
+      });
+    }
 
-function checkAnswer(index) {
-  const correct = document.querySelectorAll("button")[index].dataset.correct === "true";
-  alert(correct ? "✅ 答對了！" : "❌ 答錯了！");
-  if (correct) score++;
-  current++;
-  if (current >= questions.length) {
-    alert(`🎯 測驗結束！你答對了 ${score}/${questions.length} 題！`);
-  } else {
-    showQuestion();
+    loadQuestion(current);
+  } catch (err) {
+    console.error("載入 quiz.json 失敗：", err);
   }
-}
-
-window.onload = loadQuiz;
+});
