@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>唐詩 WebAR 測驗</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.rawgit.com/AR-js-org/AR.js/3.3.2/aframe/build/aframe-ar.min.js"></script>
+    <script src="script.js"></script>
+    <style>
+      #options { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 10; }
+      button { font-size: 16px; padding: 10px 20px; margin: 5px; }
+    </style>
+  </head>
+  <body style="margin: 0; overflow: hidden;">
+    <a-scene embedded arjs>
+      <a-marker preset="hiro">
+        <a-entity id="questionText" position="0 0.5 0" text="value: 請將 Hiro 標記對準鏡頭...; align: center; color: black; width: 2;"></a-entity>
+      </a-marker>
+      <a-entity camera></a-entity>
+    </a-scene>
+
+    <div id="options">
+      <button onclick="checkAnswer(0)">選項 1</button>
+      <button onclick="checkAnswer(1)">選項 2</button>
+      <button onclick="checkAnswer(2)">選項 3</button>
+    </div>
+  </body>
+</html>
