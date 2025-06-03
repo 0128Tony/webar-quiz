@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Grandpa AR 按鈕旋轉修正版</title>
+    <title>Grandpa AR - 直接控制旋轉</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://aframe.io/releases/0.9.2/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.7.5/aframe/build/aframe-ar.js"></script>
@@ -18,57 +18,46 @@
     </style>
   </head>
 
-  <body style="margin: 0px; overflow: hidden;">
-    <!-- 控制按鈕 -->
-    <button id="rotateBtn">讓 Grandpa 旋轉</button>
+  <body style="margin: 0; overflow: hidden;">
+    <button id="rotateBtn">旋轉 Grandpa</button>
 
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
       <a-marker type="pattern" url="pattern-marker.patt">
-        <a-entity 
+        <a-entity
           id="grandpa"
           gltf-model="Grandpa.glb"
           position="0 0 -2"
           rotation="0 0 0"
-          scale="0.5 0.5 0.5"
-          rotate-toggle>
+          scale="0.5 0.5 0.5">
         </a-entity>
       </a-marker>
-
       <a-entity camera></a-entity>
     </a-scene>
 
     <script>
-      // A-Frame component: 控制旋轉
-      AFRAME.registerComponent('rotate-toggle', {
-        init: function () {
-          this.isRotating = false;
-          this.el.sceneEl.addEventListener('loaded', () => {
-            console.log('Scene loaded');
-          });
-        },
+      let rotating = false;
+      let lastTime = null;
+
+      const grandpa = document.getElementById("grandpa");
+      const btn = document.getElementById("rotateBtn");
+
+      btn.addEventListener("click", () => {
+        rotating = !rotating;
+        btn.innerText = rotating ? "停止旋轉" : "旋轉 Grandpa";
+      });
+
+      // 每一幀都檢查是否旋轉
+      AFRAME.registerComponent('manual-rotate', {
         tick: function (time, timeDelta) {
-          if (this.isRotating) {
-            const rot = this.el.getAttribute('rotation');
-            rot.y += 60 * (timeDelta / 1000);
-            this.el.setAttribute('rotation', rot);
+          if (rotating && grandpa) {
+            const rot = grandpa.getAttribute('rotation');
+            rot.y += 60 * (timeDelta / 1000); // 每秒轉 60 度
+            grandpa.setAttribute('rotation', rot);
           }
-        },
-        toggle: function () {
-          this.isRotating = !this.isRotating;
         }
       });
 
-      // 控制按鈕
-      document.addEventListener('DOMContentLoaded', () => {
-        const btn = document.getElementById('rotateBtn');
-        const grandpa = document.querySelector('#grandpa');
-
-        btn.addEventListener('click', () => {
-          if (grandpa.components['rotate-toggle']) {
-            grandpa.components['rotate-toggle'].toggle();
-          }
-        });
-      });
+      document.querySelector('a-scene').setAttribute('manual-rotate', '');
     </script>
   </body>
 </html>
