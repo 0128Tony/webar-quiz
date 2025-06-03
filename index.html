@@ -1,44 +1,30 @@
-
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>唐詩 WebAR 測驗</title>
-  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
-  <script defer src="script.js"></script>
-  <style>
-    .btn-container {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      z-index: 2;
-    }
-    button {
-      padding: 12px 20px;
-      font-size: 16px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body style="margin: 0; overflow: hidden;">
-  <a-scene embedded arjs>
-    <a-marker preset="hiro">
-      <a-entity id="questionText" position="0 0.1 0" text="value: 載入中...; color: black; align: center"></a-entity>
-    </a-marker>
-    <!-- 人物圖片 -->
-      <a-image src="human.png" position="-1 1.5 -3" width="1.2" height="2"></a-image>
-    <a-entity camera></a-entity>
-  </a-scene>
+  <head>
+    <meta charset="utf-8">
+    <title>WebAR Grandpa</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ar.js@3.4.2/aframe/build/aframe-ar.min.js"></script>
+  </head>
+  <body style="margin: 0; overflow: hidden;">
+    <a-scene
+      embedded
+      arjs="sourceType: webcam; debugUIEnabled: false;"
+    >
+      <!-- 自訂 Marker：放在 marker/my-marker.patt -->
+      <a-marker type="pattern" url="marker/my-marker.patt">
+        <!-- 你上傳的 Grandpa 模型 -->
+        <a-entity
+          gltf-model="model/Grandpa.glb"
+          scale="0.5 0.5 0.5"
+          position="0 0 0"
+          rotation="0 0 0">
+        </a-entity>
+      </a-marker>
 
-  <div class="btn-container" id="optionButtons"></div>
-</body>
+      <!-- 相機 -->
+      <a-entity camera></a-entity>
+    </a-scene>
+  </body>
 </html>
+
