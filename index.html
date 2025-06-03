@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Grandpa AR - 直接控制旋轉</title>
+    <title>Grandpa AR - 顯示旋轉狀態</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://aframe.io/releases/0.9.2/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.7.5/aframe/build/aframe-ar.js"></script>
@@ -23,6 +23,8 @@
 
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
       <a-marker type="pattern" url="pattern-marker.patt">
+
+        <!-- Grandpa 模型 -->
         <a-entity
           id="grandpa"
           gltf-model="Grandpa.glb"
@@ -30,28 +32,39 @@
           rotation="0 0 0"
           scale="0.5 0.5 0.5">
         </a-entity>
+
+        <!-- 文字顯示 -->
+        <a-text 
+          id="statusText"
+          value=""
+          position="0 1.5 -2"
+          align="center"
+          width="4"
+          color="#000">
+        </a-text>
+
       </a-marker>
+
       <a-entity camera></a-entity>
     </a-scene>
 
     <script>
       let rotating = false;
-      let lastTime = null;
-
       const grandpa = document.getElementById("grandpa");
       const btn = document.getElementById("rotateBtn");
+      const text = document.getElementById("statusText");
 
       btn.addEventListener("click", () => {
         rotating = !rotating;
         btn.innerText = rotating ? "停止旋轉" : "旋轉 Grandpa";
+        text.setAttribute("value", rotating ? "爺爺正在旋轉中..." : "爺爺停止旋轉");
       });
 
-      // 每一幀都檢查是否旋轉
       AFRAME.registerComponent('manual-rotate', {
         tick: function (time, timeDelta) {
           if (rotating && grandpa) {
             const rot = grandpa.getAttribute('rotation');
-            rot.y += 60 * (timeDelta / 1000); // 每秒轉 60 度
+            rot.y += 60 * (timeDelta / 1000);
             grandpa.setAttribute('rotation', rot);
           }
         }
@@ -61,4 +74,3 @@
     </script>
   </body>
 </html>
-
