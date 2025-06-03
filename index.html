@@ -1,0 +1,26 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>唐詩 WebAR</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <style>
+      body { margin: 0; overflow: hidden; }
+    </style>
+  </head>
+  <body>
+    <a-scene embedded>
+      <!-- 人物圖片 -->
+      <a-image src="human.png" position="-1 1.5 -3" width="1.5" height="2"></a-image>
+
+      <!-- 題目顯示 -->
+      <a-entity position="0 2.5 -3">
+        <a-text value="床前明月光，\n疑是地上霜" align="center" color="black" width="3"></a-text>
+      </a-entity>
+
+      <!-- 相機 -->
+      <a-entity camera look-controls position="0 1.6 0"></a-entity>
+    </a-scene>
+  </body>
+</html>
