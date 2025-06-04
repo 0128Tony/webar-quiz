@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Grandpa AR - 題目導覽 + 語音輸入</title>
+    <title>Grandpa AR - 詩詞問答 + 語音控制</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://aframe.io/releases/0.9.2/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.7.5/aframe/build/aframe-ar.js"></script>
@@ -58,11 +58,12 @@
       const nextBtn = document.getElementById("nextBtn");
       const speakBtn = document.getElementById("speakBtn");
 
-      const questions = [
-        { text: "這是第一題，請仔細聽！" },
-        { text: "這是第二題，請準備回答。" },
-        { text: "第三題開始囉，加油！" },
-        { text: "這是第四題，記得想清楚再作答。" }
+      const poems = [
+        { question: "床前明月光，", answer: "疑是地上霜", distractors: ["舉頭望明月", "白日依山盡"] },
+        { question: "白日依山盡，", answer: "黃河入海流", distractors: ["疑是地上霜", "春眠不覺曉"] },
+        { question: "春眠不覺曉，", answer: "處處聞啼鳥", distractors: ["夜來風雨聲", "花落知多少"] },
+        { question: "海內存知己，", answer: "天涯若比鄰", distractors: ["春風又綠江南岸", "舉頭望明月"] },
+        { question: "日照香爐生紫煙，", answer: "遙看瀑布掛前川", distractors: ["疑是地上霜", "夜來風雨聲"] }
       ];
 
       let currentIndex = 0;
@@ -76,17 +77,17 @@
       }
 
       function speakQuestion(index) {
-        const q = questions[index];
-        speak(q.text);
+        const q = poems[index];
+        speak(`請接下句：${q.question}`);
       }
 
       prevBtn.addEventListener("click", () => {
-        currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+        currentIndex = (currentIndex - 1 + poems.length) % poems.length;
         speakQuestion(currentIndex);
       });
 
       nextBtn.addEventListener("click", () => {
-        currentIndex = (currentIndex + 1) % questions.length;
+        currentIndex = (currentIndex + 1) % poems.length;
         speakQuestion(currentIndex);
       });
 
@@ -108,7 +109,6 @@
           const userSpeech = event.results[0][0].transcript.trim();
           console.log("使用者說：", userSpeech);
 
-          // 判斷是否為控制指令
           if (userSpeech.includes("下一題")) {
             nextBtn.click();
             return;
@@ -118,8 +118,13 @@
             return;
           }
 
-          // 否則重複使用者話語
           speak("你說的是：" + userSpeech);
+
+          // 檢查是否正確作答（可擴充邏輯）
+          const currentAnswer = poems[currentIndex].answer;
+          if (userSpeech === currentAnswer) {
+            setTimeout(() => speak("回答正確！"), 1000);
+          }
         };
 
         recognition.onerror = (event) => {
