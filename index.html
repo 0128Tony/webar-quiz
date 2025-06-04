@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Grandpa AR - 語音控制</title>
+    <title>Grandpa AR - 題目導覽 + 語音輸入</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://aframe.io/releases/0.9.2/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.7.5/aframe/build/aframe-ar.js"></script>
@@ -27,55 +27,36 @@
         right: 20px;
       }
 
-      #voiceBtn {
-        position: fixed;
-        bottom: 80px;
+      #speakBtn {
         left: 50%;
         transform: translateX(-50%);
-        padding: 12px 24px;
-        font-size: 16px;
-        z-index: 10;
-      }
-
-      #notice {
-        position: fixed;
-        top: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: rgba(0, 0, 0, 0.75);
-        color: white;
-        padding: 10px 20px;
-        font-size: 16px;
-        border-radius: 8px;
-        z-index: 100;
+        bottom: 70px;
       }
     </style>
   </head>
 
   <body>
-    <div id="notice">請點下「語音輸入」按鈕開始語音辨識</div>
-    <button id="voiceBtn">🎤 語音輸入</button>
     <button id="prevBtn" class="nav-btn">上一題</button>
     <button id="nextBtn" class="nav-btn">下一題</button>
+    <button id="speakBtn" class="nav-btn">開始說話</button>
 
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
       <a-marker type="pattern" url="pattern-marker.patt">
         <a-entity
           id="grandpa"
-          gltf-model="anime_girl.glb"
-          position="0 0 0"
+          gltf-model="Grandpa.glb"
+          position="0 0 -2"
           rotation="0 0 0"
-          scale="0.1 0.1 0.1">
+          scale="0.5 0.5 0.5">
         </a-entity>
       </a-marker>
       <a-entity camera></a-entity>
     </a-scene>
 
     <script>
-      const notice = document.getElementById("notice");
       const prevBtn = document.getElementById("prevBtn");
       const nextBtn = document.getElementById("nextBtn");
-      const voiceBtn = document.getElementById("voiceBtn");
+      const speakBtn = document.getElementById("speakBtn");
 
       const questions = [
         { text: "這是第一題，請仔細聽！" },
@@ -85,14 +66,13 @@
       ];
 
       let currentIndex = 0;
-      let gameStarted = false;
 
       function speak(text) {
-        const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = "zh-TW";
+        const message = new SpeechSynthesisUtterance(text);
+        message.lang = "zh-TW";
         speechSynthesis.cancel();
-        speechSynthesis.speak(msg);
-        console.log("說話：", text);
+        speechSynthesis.speak(message);
+        console.log(`說話：${text}`);
       }
 
       function speakQuestion(index) {
@@ -101,17 +81,16 @@
       }
 
       prevBtn.addEventListener("click", () => {
-        if (!gameStarted) return;
         currentIndex = (currentIndex - 1 + questions.length) % questions.length;
         speakQuestion(currentIndex);
       });
 
       nextBtn.addEventListener("click", () => {
-        if (!gameStarted) return;
         currentIndex = (currentIndex + 1) % questions.length;
         speakQuestion(currentIndex);
       });
 
+      // 語音輸入（SpeechRecognition）
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
       if (SpeechRecognition) {
@@ -120,50 +99,34 @@
         recognition.continuous = false;
         recognition.interimResults = false;
 
-        recognition.onresult = (event) => {
-          const transcript = event.results[0][0].transcript.trim();
-          console.log("使用者說：", transcript);
+        speakBtn.addEventListener("click", () => {
+          recognition.start();
+          console.log("開始語音辨識...");
+        });
 
-          if (transcript.includes("開始遊戲")) {
-            if (!gameStarted) {
-              gameStarted = true;
-              notice.innerText = "遊戲開始囉！";
-              speak("好的，開始遊戲！");
-              setTimeout(() => {
-                speakQuestion(currentIndex);
-              }, 1500);
-            }
-          } else if (transcript.includes("下一題")) {
-            nextBtn.click();
-          } else if (transcript.includes("上一題")) {
-            prevBtn.click();
-          } else {
-            // 回覆使用者說的話
-            speak("你剛剛說的是：" + transcript);
-          }
+        recognition.onresult = (event) => {
+          const userSpeech = event.results[0][0].transcript;
+          console.log("使用者說：", userSpeech);
+          speak("你說的是：" + userSpeech);
         };
 
         recognition.onerror = (event) => {
           console.error("語音辨識錯誤：", event.error);
-          notice.innerText = "語音辨識錯誤，請再試一次。";
+          speak("辨識發生錯誤，請再試一次。");
         };
-
-        voiceBtn.addEventListener("click", () => {
-          try {
-            recognition.start();
-            notice.innerText = "請開始說話...";
-          } catch (err) {
-            console.warn("語音啟動失敗：", err);
-            notice.innerText = "語音啟動失敗，請使用 Chrome。";
-          }
-        });
       } else {
-        notice.innerText = "此瀏覽器不支援語音辨識，請使用 Chrome 開啟本頁。";
-        console.warn("SpeechRecognition 不支援");
+        speakBtn.disabled = true;
+        speakBtn.innerText = "語音辨識不支援";
+        console.warn("本瀏覽器不支援 SpeechRecognition。");
       }
+
+      window.addEventListener("load", () => {
+        speakQuestion(currentIndex);
+      });
     </script>
   </body>
 </html>
+
 
 
 
