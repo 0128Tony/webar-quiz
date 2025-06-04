@@ -105,8 +105,20 @@
         });
 
         recognition.onresult = (event) => {
-          const userSpeech = event.results[0][0].transcript;
+          const userSpeech = event.results[0][0].transcript.trim();
           console.log("使用者說：", userSpeech);
+
+          // 判斷是否為控制指令
+          if (userSpeech.includes("下一題")) {
+            nextBtn.click();
+            return;
+          }
+          if (userSpeech.includes("上一題")) {
+            prevBtn.click();
+            return;
+          }
+
+          // 否則重複使用者話語
           speak("你說的是：" + userSpeech);
         };
 
@@ -126,6 +138,7 @@
     </script>
   </body>
 </html>
+
 
 
 
