@@ -1,49 +1,42 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-<head>
-  <meta charset="UTF-8">
-  <title>AR 詩語問答原型</title>
-  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-</head>
-<body>
-  <a-scene
-    vr-mode-ui="enabled: false"
-    webxr="requiredFeatures: hit-test; optionalFeatures: dom-overlay; overlayElement: #overlay;"
-  >
-    <a-light type="ambient" intensity="0.5"></a-light>
-
-    <!-- 問答板 -->
-    <a-entity position="0 1.6 -1">
-      <a-plane width="1.5" height="1" color="#fce5b3" material="side: double" class="panel">
-        <a-text id="question-text" value="題目載入中…" color="#4a2c00" wrap-count="20"
-                position="-0.7 0.3 0.01" width="1.4"></a-text>
-        <!-- 四個選項 -->
-        <a-entity id="options" position="0 -0.1 0.01">
-          <a-plane id="opt1" class="option" position="-0.6 0.2 0" width="1.2" height="0.25" color="#ffe8a0">
-            <a-text value="1. 選項A" align="center" color="#4a2c00" position="0 0 0.01"></a-text>
-          </a-plane>
-          <a-plane id="opt2" class="option" position="-0.6 -0.15 0" width="1.2" height="0.25" color="#ffe8a0">
-            <a-text value="2. 選項B" align="center" color="#4a2c00" position="0 0 0.01"></a-text>
-          </a-plane>
-          <a-plane id="opt3" class="option" position="-0.6 -0.5 0" width="1.2" height="0.25" color="#ffe8a0">
-            <a-text value="3. 選項C" align="center" color="#4a2c00" position="0 0 0.01"></a-text>
-          </a-plane>
-          <a-plane id="opt4" class="option" position="-0.6 -0.85 0" width="1.2" height="0.25" color="#ffe8a0">
-            <a-text value="4. 選項D" align="center" color="#4a2c00" position="0 0 0.01"></a-text>
+  <head>
+    <meta charset="UTF-8" />
+    <title>AR 詩詞問答</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
+    <style>
+      body, html {
+        margin: 0;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+      <!-- AR.js 標記追蹤 -->
+      <a-marker type="pattern" url="/mnt/data/pattern-marker.patt">
+        <!-- 問答面板 -->
+        <a-entity position="0 0 0">
+          <a-plane width="2.5" height="2.5" color="#fce5b3" position="0 1 0">
+            <!-- 題目 -->
+            <a-text value="1. 靜夜思的作者是？" color="#4a2c00" width="2" position="-1 0.8 0.01" wrap-count="24"></a-text>
+            
+            <!-- 選項 -->
+            <a-text value="1. 李白" color="#4a2c00" position="-1 0.4 0.01" width="2" wrap-count="20"></a-text>
+            <a-text value="2. 杜甫" color="#4a2c00" position="-1 0.1 0.01" width="2" wrap-count="20"></a-text>
+            <a-text value="3. 白居易" color="#4a2c00" position="-1 -0.2 0.01" width="2" wrap-count="20"></a-text>
+            <a-text value="4. 王之涣" color="#4a2c00" position="-1 -0.5 0.01" width="2" wrap-count="20"></a-text>
           </a-plane>
         </a-entity>
-      </a-plane>
-    </a-entity>
+      </a-marker>
 
-    <!-- 將 sky 或 background 隱藏，以露出 camera feed -->
-    <a-sky color="#ffffff" hide-on-enter-ar></a-sky>
-
-    <a-entity camera look-controls position="0 1.6 0"></a-entity>
-  </a-scene>
-
-  <div id="overlay" style="position: absolute; top: 0; left: 0; pointer-events: none;"></div>
-</body>
+      <!-- AR 相機 -->
+      <a-entity camera></a-entity>
+    </a-scene>
+  </body>
 </html>
+
 
 
 
