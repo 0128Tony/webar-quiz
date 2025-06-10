@@ -5,14 +5,13 @@
     <title>A-Frame 唐詩問答原型</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   </head>
-  <body>
-    <a-scene>
-      <!-- 天空背景 -->
-      <a-sky color="#f5e4e0"></a-sky>
+  <body style="margin: 0; background: transparent;">
+    <a-scene embedded vr-mode-ui="enabled: false" renderer="alpha: true">
+      <!-- 已移除 a-sky，背景將呈透明 -->
 
       <!-- 問題面板 -->
       <a-entity position="0 1.6 -3">
-        <a-plane width="3" height="2" color="#fce5b3" material="side: double" radius="0.1">
+        <a-plane width="3" height="2" color="#fce5b3" material="side: double">
           <!-- 題目文字 -->
           <a-text
             id="question-text"
@@ -46,6 +45,7 @@
     </a-scene>
   </body>
 </html>
+
 
 
 
