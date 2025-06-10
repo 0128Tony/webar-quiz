@@ -1,97 +1,104 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-  <head>
-    <meta charset="UTF-8" />
-    <title>AR 詩詞問答（含語音）</title>
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
-    <style>
-      body, html {
-        margin: 0;
-        overflow: hidden;
-      }
-    </style>
-  </head>
-  <body>
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-      <!-- AR.js 標記追蹤 -->
-      <a-marker type="pattern" url="pattern-marker.patt">
-        <a-entity position="0 0 0" scale="0.7 0.7 0.7">
-          <!-- 題目面板 -->
-          <a-plane width="2.2" height="0.6" color="#fce5b3" position="0 1.8 0">
-            <a-text value="Who wrote the poem?" color="#4a2c00" width="2" position="-0.95 0 0.01" wrap-count="24"></a-text>
-          </a-plane>
+<head>
+  <meta charset="UTF-8" />
+  <title>AR 詩詞問答（含語音）</title>
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
+  <style>
+    body, html {
+      margin: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+    <a-marker type="pattern" url="pattern-marker.patt">
+      <a-entity position="0 0 0" scale="0.7 0.7 0.7">
+        <!-- 題目 -->
+        <a-plane width="2.2" height="0.6" color="#fce5b3" position="0 1.8 0">
+          <a-text value="Say one of the words below" color="#4a2c00" width="2" position="-0.95 0 0.01" wrap-count="24"></a-text>
+        </a-plane>
 
-          <!-- 選項面板（含間隔） -->
-          <a-plane width="2.2" height="0.4" color="#fff7d6" position="0 1.2 0.01">
-            <a-text value="1. Li Bai" color="#4a2c00" align="center" position="0 0 0.01" width="2"></a-text>
-          </a-plane>
-          <a-plane width="2.2" height="0.4" color="#fce5b3" position="0 0.7 0.01">
-            <a-text value="2. Du Fu" color="#4a2c00" align="center" position="0 0 0.01" width="2"></a-text>
-          </a-plane>
-          <a-plane width="2.2" height="0.4" color="#fff7d6" position="0 0.2 0.01">
-            <a-text value="3. Bai Juyi" color="#4a2c00" align="center" position="0 0 0.01" width="2"></a-text>
-          </a-plane>
-          <a-plane width="2.2" height="0.4" color="#fce5b3" position="0 -0.3 0.01">
-            <a-text value="4. Wang Zhihuan" color="#4a2c00" align="center" position="0 0 0.01" width="2"></a-text>
-          </a-plane>
+        <!-- 四個選項 -->
+        <a-plane id="opt1" width="2.2" height="0.4" color="#fff7d6" position="0 1.2 0.01">
+          <a-text value="1. Hello" color="#4a2c00" align="center" position="0 0 0.01" width="2"></a-text>
+        </a-plane>
+        <a-plane id="opt2" width="2.2" height="0.4" color="#fce5b3" position="0 0.7 0.01">
+          <a-text value="2. Good" color="#4a2c00" align="center" position="0 0 0.01" width="2"></a-text>
+        </a-plane>
+        <a-plane id="opt3" width="2.2" height="0.4" color="#fff7d6" position="0 0.2 0.01">
+          <a-text value="3. Bad" color="#4a2c00" align="center" position="0 0 0.01" width="2"></a-text>
+        </a-plane>
+        <a-plane id="opt4" width="2.2" height="0.4" color="#fce5b3" position="0 -0.3 0.01">
+          <a-text value="4. Morning" color="#4a2c00" align="center" position="0 0 0.01" width="2"></a-text>
+        </a-plane>
 
-          <!-- 語音輸入結果面板 -->
-          <a-plane width="2.2" height="0.3" color="#ccffcc" position="0 -0.9 0.01">
-            <a-text id="speech-output" value="Listening..." color="#004400" align="center" position="0 0 0.01" width="2"></a-text>
-          </a-plane>
-        </a-entity>
-      </a-marker>
+        <!-- 語音輸入結果顯示 -->
+        <a-plane width="2.2" height="0.3" color="#ccffcc" position="0 -0.9 0.01">
+          <a-text id="speech-output" value="Listening..." color="#004400" align="center" position="0 0 0.01" width="2"></a-text>
+        </a-plane>
+      </a-entity>
+    </a-marker>
 
-      <!-- AR 相機 -->
-      <a-entity camera></a-entity>
-    </a-scene>
+    <a-entity camera></a-entity>
+  </a-scene>
 
-    <!-- 語音辨識腳本 -->
-    <script>
-      window.onload = function () {
-        const speechOutput = document.getElementById("speech-output");
-
-        if (!('webkitSpeechRecognition' in window)) {
-          speechOutput.setAttribute("value", "⚠️ Browser not supported. Use Chrome.");
-          return;
-        }
-
-        const recognition = new webkitSpeechRecognition();
-        recognition.lang = "en-US";
-        recognition.continuous = true;
-        recognition.interimResults = false;
-
-        recognition.onresult = function (event) {
-          const transcript = event.results[event.resultIndex][0].transcript.trim().toLowerCase();
-          console.log("語音輸入：", transcript);
-          speechOutput.setAttribute("value", transcript);
-
-          // 判斷選項
-          if (transcript.includes("one") || transcript === "1") {
-            alert("✅ You chose: 1. Li Bai");
-          } else if (transcript.includes("two") || transcript === "2") {
-            alert("✅ You chose: 2. Du Fu");
-          } else if (transcript.includes("three") || transcript === "3") {
-            alert("✅ You chose: 3. Bai Juyi");
-          } else if (transcript.includes("four") || transcript === "4") {
-            alert("✅ You chose: 4. Wang Zhihuan");
-          }
-        };
-
-        recognition.onerror = function (e) {
-          speechOutput.setAttribute("value", "⚠️ Error, restarting...");
-        };
-
-        recognition.onend = function () {
-          setTimeout(() => recognition.start(), 1000);
-        };
-
-        recognition.start();
+  <script>
+    window.onload = function () {
+      const speechOutput = document.getElementById("speech-output");
+      const options = {
+        "hello": "opt1",
+        "good": "opt2",
+        "bad": "opt3",
+        "morning": "opt4"
       };
-    </script>
-  </body>
+
+      function resetColors() {
+        Object.values(options).forEach(id => {
+          document.getElementById(id).setAttribute("color", id === "opt1" || id === "opt3" ? "#fff7d6" : "#fce5b3");
+        });
+      }
+
+      if (!('webkitSpeechRecognition' in window)) {
+        speechOutput.setAttribute("value", "⚠️ Browser not supported. Use Chrome.");
+        return;
+      }
+
+      const recognition = new webkitSpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.continuous = true;
+      recognition.interimResults = false;
+
+      recognition.onresult = function (event) {
+        const transcript = event.results[event.resultIndex][0].transcript.trim().toLowerCase();
+        console.log("語音輸入：", transcript);
+        speechOutput.setAttribute("value", transcript);
+        resetColors();
+
+        for (const [keyword, id] of Object.entries(options)) {
+          if (transcript.includes(keyword)) {
+            document.getElementById(id).setAttribute("color", "#a8e6a1"); // 綠色背景表示選中
+            break;
+          }
+        }
+      };
+
+      recognition.onerror = function () {
+        speechOutput.setAttribute("value", "⚠️ Error, restarting...");
+      };
+
+      recognition.onend = function () {
+        setTimeout(() => recognition.start(), 1000);
+      };
+
+      recognition.start();
+    };
+  </script>
+</body>
 </html>
+
 
 
 
