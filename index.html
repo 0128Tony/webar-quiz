@@ -24,21 +24,26 @@
         </a-plane>
 
         <!-- 每個選項獨立面板 -->
-        <a-plane width="2.2" height="0.4" color="#fff7d6" position="0 1.0 0.01">
-          <a-text value="1. Li Bai" color="#4a2c00" align="center" position="0 0 0.01" width="2" wrap-count="20"></a-text>
-        </a-plane>
+        <!-- 第一個選項 -->
+          <a-plane width="2.2" height="0.4" color="#fff7d6" position="0 1.0 0.01">
+            ...
+          </a-plane>
+          
+          <!-- 第二個選項（Y 從 0.6 → 0.5） -->
+          <a-plane width="2.2" height="0.4" color="#fce5b3" position="0 0.5 0.01">
+            ...
+          </a-plane>
+          
+          <!-- 第三個選項（Y 從 0.2 → 0.0） -->
+          <a-plane width="2.2" height="0.4" color="#fff7d6" position="0 0.0 0.01">
+            ...
+          </a-plane>
+          
+          <!-- 第四個選項（Y 從 -0.2 → -0.5） -->
+          <a-plane width="2.2" height="0.4" color="#fce5b3" position="0 -0.5 0.01">
+            ...
+          </a-plane>
 
-        <a-plane width="2.2" height="0.4" color="#fce5b3" position="0 0.6 0.01">
-          <a-text value="2. Du Fu" color="#4a2c00" align="center" position="0 0 0.01" width="2" wrap-count="20"></a-text>
-        </a-plane>
-
-        <a-plane width="2.2" height="0.4" color="#fff7d6" position="0 0.2 0.01">
-          <a-text value="3. Bai Juyi" color="#4a2c00" align="center" position="0 0 0.01" width="2" wrap-count="20"></a-text>
-        </a-plane>
-
-        <a-plane width="2.2" height="0.4" color="#fce5b3" position="0 -0.2 0.01">
-          <a-text value="4. Wang Zhihuan" color="#4a2c00" align="center" position="0 0 0.01" width="2" wrap-count="20"></a-text>
-        </a-plane>
       </a-entity>
     </a-marker>
 
