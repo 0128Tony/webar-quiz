@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>AR 詩詞問答（含語音）</title>
+  <title>雙 Marker AR 問答（含語音）</title>
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
   <style>
@@ -14,30 +14,48 @@
 </head>
 <body>
   <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+
+    <!-- 第一個 Marker -->
     <a-marker type="pattern" url="pattern-marker.patt">
       <a-entity position="0 0 0.1" rotation="-90 0 0" scale="0.7 0.7 0.7">
-        <!-- 題目 -->
         <a-plane width="2.2" height="0.6" color="#fce5b3" position="0 1.8 0">
           <a-text value="Say one of the words below" color="#4a2c00" width="2" position="-0.95 0 0.01" wrap-count="24"></a-text>
         </a-plane>
-
-        <!-- 選項 -->
         <a-plane id="opt1" width="2.2" height="0.4" color="#fff7d6" position="0 1.2 0.01">
-          <a-text value="1. Hello" color="#4a2c00" align="center" position="0 0 0.01" width="2"></a-text>
+          <a-text value="1. Hello" align="center" color="#4a2c00" position="0 0 0.01" width="2"></a-text>
         </a-plane>
         <a-plane id="opt2" width="2.2" height="0.4" color="#fce5b3" position="0 0.7 0.01">
-          <a-text value="2. Good" color="#4a2c00" align="center" position="0 0 0.01" width="2"></a-text>
+          <a-text value="2. Good" align="center" color="#4a2c00" position="0 0 0.01" width="2"></a-text>
         </a-plane>
         <a-plane id="opt3" width="2.2" height="0.4" color="#fff7d6" position="0 0.2 0.01">
-          <a-text value="3. Bad" color="#4a2c00" align="center" position="0 0 0.01" width="2"></a-text>
+          <a-text value="3. Bad" align="center" color="#4a2c00" position="0 0 0.01" width="2"></a-text>
         </a-plane>
         <a-plane id="opt4" width="2.2" height="0.4" color="#fce5b3" position="0 -0.3 0.01">
-          <a-text value="4. Morning" color="#4a2c00" align="center" position="0 0 0.01" width="2"></a-text>
+          <a-text value="4. Morning" align="center" color="#4a2c00" position="0 0 0.01" width="2"></a-text>
         </a-plane>
-
-        <!-- 語音輸入結果面板 -->
         <a-plane width="2.2" height="0.3" color="#ccffcc" position="0 -0.9 0.01">
           <a-text id="speech-output" value="Listening..." color="#004400" align="center" position="0 0 0.01" width="2"></a-text>
+        </a-plane>
+      </a-entity>
+    </a-marker>
+
+    <!-- 第二個 Marker -->
+    <a-marker type="pattern" url="pattern-marker2.patt">
+      <a-entity position="0 0 0.1" rotation="-90 0 0" scale="0.7 0.7 0.7">
+        <a-plane width="2.2" height="0.6" color="#d0e8f2" position="0 1.8 0">
+          <a-text value="Say a color below" color="#003344" width="2" position="-0.95 0 0.01" wrap-count="24"></a-text>
+        </a-plane>
+        <a-plane id="opt5" width="2.2" height="0.4" color="#e0f7fa" position="0 1.2 0.01">
+          <a-text value="1. Red" align="center" color="#003344" position="0 0 0.01" width="2"></a-text>
+        </a-plane>
+        <a-plane id="opt6" width="2.2" height="0.4" color="#d0f0f2" position="0 0.7 0.01">
+          <a-text value="2. Green" align="center" color="#003344" position="0 0 0.01" width="2"></a-text>
+        </a-plane>
+        <a-plane id="opt7" width="2.2" height="0.4" color="#e0f7fa" position="0 0.2 0.01">
+          <a-text value="3. Blue" align="center" color="#003344" position="0 0 0.01" width="2"></a-text>
+        </a-plane>
+        <a-plane id="opt8" width="2.2" height="0.4" color="#d0f0f2" position="0 -0.3 0.01">
+          <a-text value="4. Yellow" align="center" color="#003344" position="0 0 0.01" width="2"></a-text>
         </a-plane>
       </a-entity>
     </a-marker>
@@ -45,26 +63,35 @@
     <a-entity camera></a-entity>
   </a-scene>
 
-  <!-- 語音辨識腳本 -->
   <script>
     window.onload = function () {
-      const speechOutput = document.getElementById("speech-output");
+      const output = document.getElementById("speech-output");
       const options = {
         "hello": "opt1",
         "good": "opt2",
         "bad": "opt3",
-        "morning": "opt4"
+        "morning": "opt4",
+        "red": "opt5",
+        "green": "opt6",
+        "blue": "opt7",
+        "yellow": "opt8"
       };
 
       function resetColors() {
-        Object.entries(options).forEach(([_, id]) => {
-          const defaultColor = (id === "opt1" || id === "opt3") ? "#fff7d6" : "#fce5b3";
-          document.getElementById(id).setAttribute("color", defaultColor);
-        });
+        for (const [word, id] of Object.entries(options)) {
+          if (!document.getElementById(id)) continue;
+          const isAlt = id.endsWith("1") || id.endsWith("3") || id.endsWith("5") || id.endsWith("7");
+          const color = isAlt ? "#fff7d6" : "#fce5b3";
+          if (id.startsWith("opt5")) {
+            document.getElementById(id).setAttribute("color", isAlt ? "#e0f7fa" : "#d0f0f2");
+          } else {
+            document.getElementById(id).setAttribute("color", color);
+          }
+        }
       }
 
       if (!('webkitSpeechRecognition' in window)) {
-        speechOutput.setAttribute("value", "⚠️ Browser not supported. Use Chrome.");
+        output.setAttribute("value", "⚠️ Use Chrome for speech input");
         return;
       }
 
@@ -75,26 +102,19 @@
 
       recognition.onresult = function (event) {
         const transcript = event.results[event.resultIndex][0].transcript.trim().toLowerCase();
-        console.log("語音輸入：", transcript);
-        speechOutput.setAttribute("value", transcript);
+        output.setAttribute("value", transcript);
         resetColors();
 
-        for (const [keyword, id] of Object.entries(options)) {
-          if (transcript.includes(keyword)) {
-            document.getElementById(id).setAttribute("color", "#a8e6a1"); // 綠色選中
+        for (const [key, id] of Object.entries(options)) {
+          if (transcript.includes(key) && document.getElementById(id)) {
+            document.getElementById(id).setAttribute("color", "#a8e6a1");
             break;
           }
         }
       };
 
-      recognition.onerror = function () {
-        speechOutput.setAttribute("value", "⚠️ Error, restarting...");
-      };
-
-      recognition.onend = function () {
-        setTimeout(() => recognition.start(), 1000);
-      };
-
+      recognition.onerror = () => output.setAttribute("value", "⚠️ Error");
+      recognition.onend = () => setTimeout(() => recognition.start(), 1000);
       recognition.start();
     };
   </script>
