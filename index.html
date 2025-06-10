@@ -16,17 +16,17 @@
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
       <!-- AR.js 標記追蹤 -->
       <a-marker type="pattern" url="pattern-marker.patt">
-        <!-- 問答面板 -->
-        <a-entity position="0 0 0">
-          <a-plane width="2.5" height="2.2" color="#fce5b3" position="0 1 0">
+        <!-- 縮小問答面板整體尺寸 -->
+        <a-entity position="0 0 0" scale="0.7 0.7 0.7">
+          <a-plane width="2.2" height="1.8" color="#fce5b3" position="0 1 0">
             <!-- 題目 -->
-            <a-text value="Who wrote the poem?" color="#4a2c00" width="2" position="-1.1 0.7 0.01" wrap-count="24"></a-text>
+            <a-text value="Who wrote the poem?" color="#4a2c00" width="1.8" position="-0.95 0.6 0.01" wrap-count="24"></a-text>
             
             <!-- 英文選項 -->
-            <a-text value="1. Li Bai" color="#4a2c00" position="-1 0.4 0.01" width="2" wrap-count="20"></a-text>
-            <a-text value="2. Du Fu" color="#4a2c00" position="-1 0.1 0.01" width="2" wrap-count="20"></a-text>
-            <a-text value="3. Bai Juyi" color="#4a2c00" position="-1 -0.2 0.01" width="2" wrap-count="20"></a-text>
-            <a-text value="4. Wang Zhihuan" color="#4a2c00" position="-1 -0.5 0.01" width="2" wrap-count="20"></a-text>
+            <a-text value="1. Li Bai" color="#4a2c00" position="-0.95 0.3 0.01" width="1.8" wrap-count="20"></a-text>
+            <a-text value="2. Du Fu" color="#4a2c00" position="-0.95 0.05 0.01" width="1.8" wrap-count="20"></a-text>
+            <a-text value="3. Bai Juyi" color="#4a2c00" position="-0.95 -0.2 0.01" width="1.8" wrap-count="20"></a-text>
+            <a-text value="4. Wang Zhihuan" color="#4a2c00" position="-0.95 -0.45 0.01" width="1.8" wrap-count="20"></a-text>
           </a-plane>
         </a-entity>
       </a-marker>
@@ -36,6 +36,7 @@
     </a-scene>
   </body>
 </html>
+
 
 
 
