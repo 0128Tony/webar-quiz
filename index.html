@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>顯示 C A R 字母</title>
+  <title>3D 顯示 C A R 字母</title>
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
   <style>
@@ -15,24 +15,33 @@
 <body>
   <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
 
-    <!-- Marker C -->
+    <!-- Marker C 對應 C.glb -->
     <a-marker type="pattern" url="pattern-C.patt">
-      <a-entity position="0 0 0.1" rotation="-90 0 0">
-        <a-text value="C" color="#FF0000" align="center" width="3" position="0 0 0"></a-text>
+      <a-entity 
+        gltf-model="C.glb" 
+        position="0 0 0" 
+        rotation="-90 0 0" 
+        scale="0.5 0.5 0.5">
       </a-entity>
     </a-marker>
 
-    <!-- Marker A -->
+    <!-- Marker A 對應 A.glb -->
     <a-marker type="pattern" url="pattern-A.patt">
-      <a-entity position="0 0 0.1" rotation="-90 0 0">
-        <a-text value="A" color="#00AA00" align="center" width="3" position="0 0 0"></a-text>
+      <a-entity 
+        gltf-model="A.glb" 
+        position="0 0 0" 
+        rotation="-90 0 0" 
+        scale="0.5 0.5 0.5">
       </a-entity>
     </a-marker>
 
-    <!-- Marker R -->
+    <!-- Marker R 對應 R.glb -->
     <a-marker type="pattern" url="pattern-R.patt">
-      <a-entity position="0 0 0.1" rotation="-90 0 0">
-        <a-text value="R" color="#0000FF" align="center" width="3" position="0 0 0"></a-text>
+      <a-entity 
+        gltf-model="R.glb" 
+        position="0 0 0" 
+        rotation="-90 0 0" 
+        scale="0.5 0.5 0.5">
       </a-entity>
     </a-marker>
 
