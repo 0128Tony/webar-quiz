@@ -10,29 +10,14 @@
       margin: 0;
       overflow: hidden;
     }
-    #distance-info {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      background: rgba(0, 0, 0, 0.6);
-      color: #fff;
-      font-family: sans-serif;
-      font-size: 14px;
-      padding: 10px;
-      border-radius: 8px;
-      z-index: 999;
-      white-space: pre-line;
-    }
   </style>
 </head>
 <body>
-  <div id="distance-info">距離偵測中...</div>
-
   <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
 
     <!-- Marker C -->
     <a-marker id="markerC" type="pattern" url="pattern-C.patt">
-      <a-entity id="modelC" gltf-model="A2.glb" position="0 0.1 0" scale="0.8 0.8 0.8"
+      <a-entity gltf-model="A2.glb" position="0 0.1 0" scale="0.8 0.8 0.8"
         look-at="[camera]"
         animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.3 0">
       </a-entity>
@@ -44,6 +29,8 @@
         look-at="[camera]"
         animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.3 0">
       </a-entity>
+
+      <!-- 大的 A 模型（初始隱藏） -->
       <a-entity id="bigA" gltf-model="A2.glb" position="0 0.4 0" scale="1.5 1.5 1.5"
         visible="false"
         animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.6 0">
@@ -52,7 +39,7 @@
 
     <!-- Marker R -->
     <a-marker id="markerR" type="pattern" url="pattern-R.patt">
-      <a-entity id="modelR" gltf-model="A2.glb" position="0 0.1 0" scale="0.8 0.8 0.8"
+      <a-entity gltf-model="A2.glb" position="0 0.1 0" scale="0.8 0.8 0.8"
         look-at="[camera]"
         animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.3 0">
       </a-entity>
@@ -62,81 +49,54 @@
     <a-entity camera></a-entity>
   </a-scene>
 
-  <script>
-    let isCVisible = false;
-    let isAVisible = false;
-    let isRVisible = false;
+<script>
+  let isCVisible = false;
+  let isAVisible = false;
+  let isRVisible = false;
 
-    const markerC = document.querySelector('#markerC');
-    const markerA = document.querySelector('#markerA');
-    const markerR = document.querySelector('#markerR');
-    const modelC = document.querySelector('#modelC');
-    const modelA = document.querySelector('#modelA');
-    const modelR = document.querySelector('#modelR');
-    const bigA = document.querySelector('#bigA');
-    const infoBox = document.getElementById('distance-info');
+  const markerC = document.querySelector('#markerC');
+  const markerA = document.querySelector('#markerA');
+  const markerR = document.querySelector('#markerR');
+  const bigA = document.querySelector('#bigA');
+  const modelA = document.querySelector('#modelA');
 
-    markerC.addEventListener('markerFound', () => { isCVisible = true; updateBigA(); });
-    markerC.addEventListener('markerLost', () => { isCVisible = false; updateBigA(); });
+  markerC.addEventListener('markerFound', () => { isCVisible = true; updateBigA(); });
+  markerC.addEventListener('markerLost', () => { isCVisible = false; updateBigA(); });
 
-    markerA.addEventListener('markerFound', () => { isAVisible = true; updateBigA(); });
-    markerA.addEventListener('markerLost', () => { isAVisible = false; updateBigA(); });
+  markerA.addEventListener('markerFound', () => { isAVisible = true; updateBigA(); });
+  markerA.addEventListener('markerLost', () => { isAVisible = false; updateBigA(); });
 
-    markerR.addEventListener('markerFound', () => { isRVisible = true; updateBigA(); });
-    markerR.addEventListener('markerLost', () => { isRVisible = false; updateBigA(); });
+  markerR.addEventListener('markerFound', () => { isRVisible = true; updateBigA(); });
+  markerR.addEventListener('markerLost', () => { isRVisible = false; updateBigA(); });
 
-    function updateBigA() {
-      const allVisible = isCVisible && isAVisible && isRVisible;
+  function updateBigA() {
+    const modelC = markerC.querySelector('a-entity');
+    const modelR = markerR.querySelector('a-entity');
 
-      if (!allVisible) {
-        bigA.setAttribute('visible', false);
-        modelA.setAttribute('visible', true);
-        modelC.setAttribute('visible', true);
-        modelR.setAttribute('visible', true);
-        infoBox.textContent = '尚未全部偵測到三個 marker';
-        return;
-      }
+    const allVisible = isCVisible && isAVisible && isRVisible;
 
+    let showBigA = false;
+
+    if (allVisible) {
       const posC = new THREE.Vector3();
       const posA = new THREE.Vector3();
       const posR = new THREE.Vector3();
-      
+
       markerC.object3D.getWorldPosition(posC);
       markerA.object3D.getWorldPosition(posA);
       markerR.object3D.getWorldPosition(posR);
 
-
-      const distCA = posC.distanceTo(posA);
-      const distAR = posA.distanceTo(posR);
-      const distCR = posC.distanceTo(posR);
-
-      const threshold = 4.0;
-
-      // 顯示距離
-      updateDistanceDisplay(distCA, distAR, distCR);
-
-      if (distCA < threshold && distAR < threshold && distCR < threshold) {
-        bigA.setAttribute('visible', true);
-        modelA.setAttribute('visible', false);
-        modelC.setAttribute('visible', false);
-        modelR.setAttribute('visible', false);
-      } else {
-        bigA.setAttribute('visible', false);
-        modelA.setAttribute('visible', true);
-        modelC.setAttribute('visible', true);
-        modelR.setAttribute('visible', true);
+      if (posC.x < posA.x && posA.x < posR.x) {
+        showBigA = true;
       }
     }
 
-    function updateDistanceDisplay(dCA, dAR, dCR) {
-      infoBox.textContent = `
-距離資訊（單位：公尺）：
-C ↔ A：${dCA.toFixed(2)}
-A ↔ R：${dAR.toFixed(2)}
-C ↔ R：${dCR.toFixed(2)}
-`;
-    }
-  </script>
+    bigA.setAttribute('visible', showBigA);
+    modelA.setAttribute('visible', !showBigA);
+    modelC.setAttribute('visible', !showBigA);
+    modelR.setAttribute('visible', !showBigA);
+  }
+</script>
 </body>
 </html>
 
