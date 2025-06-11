@@ -80,6 +80,7 @@
     const markerA = document.querySelector('#markerA');
     const markerR = document.querySelector('#markerR');
     const bigA = document.querySelector('#bigA');
+    const speechText = document.getElementById('speech-text');
 
     markerC.addEventListener('markerFound', () => { isCVisible = true; updateBigA(); });
     markerC.addEventListener('markerLost', () => { isCVisible = false; updateBigA(); });
@@ -94,16 +95,12 @@
       const showBigA = isCVisible && isAVisible && isRVisible;
       bigA.setAttribute('visible', showBigA);
 
-      const modelA = document.querySelector('#modelA');
-      const modelC = document.querySelector('#modelC');
-      const modelR = document.querySelector('#modelR');
-
-      modelA.setAttribute('visible', !showBigA);
-      modelC.setAttribute('visible', !showBigA);
-      modelR.setAttribute('visible', !showBigA);
+      document.querySelector('#modelA').setAttribute('visible', !showBigA);
+      document.querySelector('#modelC').setAttribute('visible', !showBigA);
+      document.querySelector('#modelR').setAttribute('visible', !showBigA);
     }
 
-    // 點擊 bigA 開始或停止旋轉動畫
+    // 點擊 bigA 觸發旋轉動畫
     bigA.addEventListener('click', () => {
       if (!isRotating) {
         bigA.setAttribute('animation__rotate', {
@@ -120,8 +117,7 @@
       }
     });
 
-    // 語音辨識初始化
-    const speechText = document.getElementById('speech-text');
+    // 語音辨識控制旋轉方向
     if ('webkitSpeechRecognition' in window) {
       const recognition = new webkitSpeechRecognition();
       recognition.lang = 'zh-TW';
@@ -133,7 +129,14 @@
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           const result = event.results[i];
           if (result.isFinal) {
-            speechText.textContent = result[0].transcript.trim();
+            const command = result[0].transcript.trim();
+            speechText.textContent = command;
+
+            if (command.includes("左轉")) {
+              bigA.setAttribute('rotation', '0 -90 0');
+            } else if (command.includes("右轉")) {
+              bigA.setAttribute('rotation', '0 90 0');
+            }
           } else {
             interim += result[0].transcript;
             speechText.textContent = interim + '...';
@@ -157,6 +160,7 @@
   </script>
 </body>
 </html>
+
 
 
 
