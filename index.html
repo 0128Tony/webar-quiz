@@ -42,13 +42,6 @@
         look-at="[camera]"
         animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.3 0">
       </a-entity>
-
-      <!-- 放大 A 模型（初始隱藏，可點擊） -->
-      <a-entity id="bigA" gltf-model="A2.glb" position="0 0.4 0" scale="1.5 1.5 1.5"
-        visible="false"
-        class="clickable"
-        animation__float="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.6 0">
-      </a-entity>
     </a-marker>
 
     <!-- Marker R -->
@@ -59,13 +52,17 @@
       </a-entity>
     </a-marker>
 
-    <!-- 相機與滑鼠光標（支援點擊） -->
-    <a-entity camera>
-      <a-entity cursor="rayOrigin: mouse" raycaster="objects: .clickable"></a-entity>
+    <!-- 大寫 A 模型，獨立存在 -->
+    <a-entity id="bigA" gltf-model="A2.glb" position="0 0.4 0" scale="1.5 1.5 1.5"
+      visible="false"
+      animation__float="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.6 0">
     </a-entity>
+
+    <!-- 相機 -->
+    <a-entity camera></a-entity>
   </a-scene>
 
-  <!-- 語音辨識顯示 -->
+  <!-- 語音辨識顯示區塊 -->
   <div id="speech-display">
     🎙️ 語音輸入：<span id="speech-text">（等待中...）</span>
   </div>
@@ -74,7 +71,6 @@
     let isCVisible = false;
     let isAVisible = false;
     let isRVisible = false;
-    let isRotating = false;
 
     const markerC = document.querySelector('#markerC');
     const markerA = document.querySelector('#markerA');
@@ -93,31 +89,21 @@
 
     function updateBigA() {
       const showBigA = isCVisible && isAVisible && isRVisible;
-      bigA.setAttribute('visible', showBigA);
 
+      bigA.setAttribute('visible', showBigA);
       document.querySelector('#modelA').setAttribute('visible', !showBigA);
       document.querySelector('#modelC').setAttribute('visible', !showBigA);
       document.querySelector('#modelR').setAttribute('visible', !showBigA);
+
+      if (showBigA && markerA.object3D.visible) {
+        const pos = markerA.object3D.position;
+        bigA.object3D.position.set(pos.x, pos.y + 0.3, pos.z);
+        const rot = markerA.object3D.rotation;
+        bigA.object3D.rotation.set(rot.x, rot.y, rot.z);
+      }
     }
 
-    // 點擊 bigA 觸發旋轉動畫
-    bigA.addEventListener('click', () => {
-      if (!isRotating) {
-        bigA.setAttribute('animation__rotate', {
-          property: 'rotation',
-          to: '0 360 0',
-          loop: true,
-          dur: 2000,
-          easing: 'linear'
-        });
-        isRotating = true;
-      } else {
-        bigA.removeAttribute('animation__rotate');
-        isRotating = false;
-      }
-    });
-
-    // 語音辨識控制旋轉方向
+    // 語音辨識控制
     if ('webkitSpeechRecognition' in window) {
       const recognition = new webkitSpeechRecognition();
       recognition.lang = 'zh-TW';
@@ -131,11 +117,14 @@
           if (result.isFinal) {
             const command = result[0].transcript.trim();
             speechText.textContent = command;
+            console.log("語音指令：", command);
 
-            if (command.includes("左轉")) {
-              bigA.setAttribute('rotation', '0 -90 0');
-            } else if (command.includes("右轉")) {
-              bigA.setAttribute('rotation', '0 90 0');
+            if (bigA.getAttribute('visible')) {
+              if (command.includes("左轉")) {
+                bigA.setAttribute('rotation', '0 -90 0');
+              } else if (command.includes("右轉")) {
+                bigA.setAttribute('rotation', '0 90 0');
+              }
             }
           } else {
             interim += result[0].transcript;
@@ -160,6 +149,8 @@
   </script>
 </body>
 </html>
+
+
 
 
 
