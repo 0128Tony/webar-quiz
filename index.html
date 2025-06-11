@@ -69,9 +69,18 @@
     markerR.addEventListener('markerLost', () => { isRVisible = false; updateBigA(); });
 
     function updateBigA() {
-      const showBigA = isCVisible && isAVisible && isRVisible;
-      bigA.setAttribute('visible', showBigA);
-    }
+  const showBigA = isCVisible && isAVisible && isRVisible;
+  bigA.setAttribute('visible', showBigA);
+
+  // 同步控制小模型的顯示狀態
+  const modelA = document.querySelector('#modelA');
+  const modelC = markerC.querySelector('a-entity');
+  const modelR = markerR.querySelector('a-entity');
+
+  modelA.setAttribute('visible', !showBigA);
+  modelC.setAttribute('visible', !showBigA);
+  modelR.setAttribute('visible', !showBigA);
+}
   </script>
 </body>
 </html>
