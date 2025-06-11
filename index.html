@@ -17,7 +17,7 @@
 
     <!-- Marker C -->
     <a-marker id="markerC" type="pattern" url="pattern-C.patt">
-      <a-entity id="modelC" gltf-model="A2.glb" position="0 0.1 0" scale="0.8 0.8 0.8"
+      <a-entity gltf-model="A2.glb" position="0 0.1 0" scale="0.8 0.8 0.8"
         look-at="[camera]"
         animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.3 0">
       </a-entity>
@@ -29,21 +29,21 @@
         look-at="[camera]"
         animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.3 0">
       </a-entity>
+
+      <!-- 大的 A 模型（初始隱藏） -->
+      <a-entity id="bigA" gltf-model="A2.glb" position="0 0.4 0" scale="1.5 1.5 1.5"
+        visible="false"
+        animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.6 0">
+      </a-entity>
     </a-marker>
 
     <!-- Marker R -->
     <a-marker id="markerR" type="pattern" url="pattern-R.patt">
-      <a-entity id="modelR" gltf-model="A2.glb" position="0 0.1 0" scale="0.8 0.8 0.8"
+      <a-entity gltf-model="A2.glb" position="0 0.1 0" scale="0.8 0.8 0.8"
         look-at="[camera]"
         animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.3 0">
       </a-entity>
     </a-marker>
-
-    <!-- 大寫 A 模型，獨立存在 -->
-    <a-entity id="bigA" gltf-model="A2.glb" position="0 0.4 0" scale="1.5 1.5 1.5"
-      visible="false"
-      animation__float="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.6 0">
-    </a-entity>
 
     <!-- 相機 -->
     <a-entity camera></a-entity>
@@ -69,20 +69,18 @@
     markerR.addEventListener('markerLost', () => { isRVisible = false; updateBigA(); });
 
     function updateBigA() {
-      const showBigA = isCVisible && isAVisible && isRVisible;
+  const showBigA = isCVisible && isAVisible && isRVisible;
+  bigA.setAttribute('visible', showBigA);
 
-      bigA.setAttribute('visible', showBigA);
-      document.querySelector('#modelA').setAttribute('visible', !showBigA);
-      document.querySelector('#modelC').setAttribute('visible', !showBigA);
-      document.querySelector('#modelR').setAttribute('visible', !showBigA);
+  // 同步控制小模型的顯示狀態
+  const modelA = document.querySelector('#modelA');
+  const modelC = markerC.querySelector('a-entity');
+  const modelR = markerR.querySelector('a-entity');
 
-      if (showBigA && markerA.object3D.visible) {
-        const pos = markerA.object3D.position;
-        bigA.object3D.position.set(pos.x, pos.y + 0.3, pos.z);
-        const rot = markerA.object3D.rotation;
-        bigA.object3D.rotation.set(rot.x, rot.y, rot.z);
-      }
-    }
+  modelA.setAttribute('visible', !showBigA);
+  modelC.setAttribute('visible', !showBigA);
+  modelR.setAttribute('visible', !showBigA);
+}
   </script>
 </body>
 </html>
