@@ -28,7 +28,7 @@
     <!-- Marker A -->
     <a-marker type="pattern" url="pattern-A.patt">
       <a-entity 
-        gltf-model="R.glb" 
+        gltf-model="A2.glb" 
         position="0 0.1 0" 
         scale="0.2 0.2 0.2"
         look-at="[camera]">
@@ -45,12 +45,12 @@
       </a-entity>
     </a-marker>
 
-    <!-- 新 GLB 模型（初始隱藏） -->
+    <!-- 新 GLB 模型（初始隱藏，會動態定位） -->
     <a-entity id="comboModel"
               gltf-model="A2.glb"
-              position="0 0.1 0"
               scale="0.3 0.3 0.3"
-              visible="false">
+              visible="false"
+              look-at="[camera]">
     </a-entity>
 
     <!-- 相機 -->
@@ -87,13 +87,32 @@
 
     function checkCombo() {
       const showCombo = isCVisible && isRVisible;
-      comboModel.setAttribute('visible', showCombo);
-      modelC.setAttribute('visible', !showCombo);
-      modelR.setAttribute('visible', !showCombo);
+
+      if (showCombo) {
+        // 取得 C 與 R 的世界位置
+        const posC = new THREE.Vector3();
+        const posR = new THREE.Vector3();
+        markerC.object3D.getWorldPosition(posC);
+        markerR.object3D.getWorldPosition(posR);
+
+        // 計算中點
+        const mid = new THREE.Vector3().addVectors(posC, posR).multiplyScalar(0.5);
+
+        // 設定 comboModel 位置與可見
+        comboModel.setAttribute('position', `${mid.x} ${mid.y + 0.1} ${mid.z}`);
+        comboModel.setAttribute('visible', true);
+        modelC.setAttribute('visible', false);
+        modelR.setAttribute('visible', false);
+      } else {
+        comboModel.setAttribute('visible', false);
+        modelC.setAttribute('visible', true);
+        modelR.setAttribute('visible', true);
+      }
     }
   </script>
 </body>
 </html>
+
 
 
 
