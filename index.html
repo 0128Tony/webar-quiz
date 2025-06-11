@@ -32,20 +32,22 @@
 <!-- Marker A 對應 A.glb -->
 <a-marker type="pattern" url="pattern-A.patt">
   <a-entity 
-    gltf-model="2.glb" 
-    position="0 0.1 0" 
-    scale="0.8 0.8 0.8"
-    look-at="[camera]">
-  </a-entity>
+  gltf-model="A2.glb" 
+  position="0 0.1 0" 
+  scale="0.8 0.8 0.8"
+  look-at="[camera]"
+  animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.3 0">
+</a-entity>
 </a-marker>
 
 <!-- Marker R 對應 R.glb -->
 <a-marker type="pattern" url="pattern-R.patt">
 <a-entity 
-  gltf-model="R-lore.glb" 
+  gltf-model="A2.glb" 
   position="0 0.1 0" 
-  scale="0.2 0.2 0.2"
-  look-at="[camera]">
+  scale="0.8 0.8 0.8"
+  look-at="[camera]"
+  animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.3 0">
 </a-entity>
 </a-marker>
 
