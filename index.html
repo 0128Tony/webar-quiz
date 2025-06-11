@@ -30,10 +30,11 @@
         animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.3 0">
       </a-entity>
 
-      <!-- 大的 A 模型（初始隱藏） -->
+      <!-- 大的 A 模型（初始隱藏，可點擊） -->
       <a-entity id="bigA" gltf-model="A2.glb" position="0 0.4 0" scale="1.5 1.5 1.5"
         visible="false"
-        animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.6 0">
+        class="clickable"
+        animation__float="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.6 0">
       </a-entity>
     </a-marker>
 
@@ -45,14 +46,17 @@
       </a-entity>
     </a-marker>
 
-    <!-- 相機 -->
-    <a-entity camera></a-entity>
+    <!-- 相機 + 滑鼠光標（支援點擊） -->
+    <a-entity camera>
+      <a-entity cursor="rayOrigin: mouse" raycaster="objects: .clickable"></a-entity>
+    </a-entity>
   </a-scene>
 
   <script>
     let isCVisible = false;
     let isAVisible = false;
     let isRVisible = false;
+    let isRotating = false;
 
     const markerC = document.querySelector('#markerC');
     const markerA = document.querySelector('#markerA');
@@ -69,21 +73,39 @@
     markerR.addEventListener('markerLost', () => { isRVisible = false; updateBigA(); });
 
     function updateBigA() {
-  const showBigA = isCVisible && isAVisible && isRVisible;
-  bigA.setAttribute('visible', showBigA);
+      const showBigA = isCVisible && isAVisible && isRVisible;
+      bigA.setAttribute('visible', showBigA);
 
-  // 同步控制小模型的顯示狀態
-  const modelA = document.querySelector('#modelA');
-  const modelC = markerC.querySelector('a-entity');
-  const modelR = markerR.querySelector('a-entity');
+      // 同步控制小模型的顯示狀態
+      const modelA = document.querySelector('#modelA');
+      const modelC = markerC.querySelector('a-entity');
+      const modelR = markerR.querySelector('a-entity');
 
-  modelA.setAttribute('visible', !showBigA);
-  modelC.setAttribute('visible', !showBigA);
-  modelR.setAttribute('visible', !showBigA);
-}
+      modelA.setAttribute('visible', !showBigA);
+      modelC.setAttribute('visible', !showBigA);
+      modelR.setAttribute('visible', !showBigA);
+    }
+
+    // 點擊觸發旋轉動畫
+    bigA.addEventListener('click', () => {
+      if (!isRotating) {
+        bigA.setAttribute('animation__rotate', {
+          property: 'rotation',
+          to: '0 360 0',
+          loop: true,
+          dur: 2000,
+          easing: 'linear'
+        });
+        isRotating = true;
+      } else {
+        bigA.removeAttribute('animation__rotate');
+        isRotating = false;
+      }
+    });
   </script>
 </body>
 </html>
+
 
 
 
