@@ -99,7 +99,7 @@ function updateBigA() {
     markerA.object3D.getWorldPosition(posA);
     markerR.object3D.getWorldPosition(posR);
 
-    const tolerance = 1;
+    const tolerance = 3;
     const isInOrder = (posA.x - posC.x > tolerance) && (posR.x - posA.x > tolerance);
 
     if (isInOrder) {
