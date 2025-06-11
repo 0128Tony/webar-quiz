@@ -69,13 +69,13 @@
   markerR.addEventListener('markerFound', () => { isRVisible = true; updateBigA(); });
   markerR.addEventListener('markerLost', () => { isRVisible = false; updateBigA(); });
 
+  let showBigATimeout = null;
+  let lastShowState = false;
+
   function updateBigA() {
     const modelC = markerC.querySelector('a-entity');
     const modelR = markerR.querySelector('a-entity');
-
     const allVisible = isCVisible && isAVisible && isRVisible;
-
-    let showBigA = false;
 
     if (allVisible) {
       const posC = new THREE.Vector3();
@@ -86,19 +86,39 @@
       markerA.object3D.getWorldPosition(posA);
       markerR.object3D.getWorldPosition(posR);
 
-      if (posC.x < posA.x && posA.x < posR.x) {
-        showBigA = true;
-      }
-    }
+      const tolerance = 0.05;
+      const isInOrder = (posA.x - posC.x > tolerance) && (posR.x - posA.x > tolerance);
 
-    bigA.setAttribute('visible', showBigA);
-    modelA.setAttribute('visible', !showBigA);
-    modelC.setAttribute('visible', !showBigA);
-    modelR.setAttribute('visible', !showBigA);
+      if (isInOrder && !lastShowState) {
+        clearTimeout(showBigATimeout);
+        showBigATimeout = setTimeout(() => {
+          bigA.setAttribute('visible', true);
+          modelA.setAttribute('visible', false);
+          modelC.setAttribute('visible', false);
+          modelR.setAttribute('visible', false);
+          lastShowState = true;
+        }, 500); // 500 毫秒穩定後才顯示
+      } else if (!isInOrder && lastShowState) {
+        clearTimeout(showBigATimeout);
+        bigA.setAttribute('visible', false);
+        modelA.setAttribute('visible', true);
+        modelC.setAttribute('visible', true);
+        modelR.setAttribute('visible', true);
+        lastShowState = false;
+      }
+    } else {
+      clearTimeout(showBigATimeout);
+      bigA.setAttribute('visible', false);
+      modelA.setAttribute('visible', true);
+      modelC.setAttribute('visible', true);
+      modelR.setAttribute('visible', true);
+      lastShowState = false;
+    }
   }
 </script>
 </body>
 </html>
+
 
 
 
