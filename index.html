@@ -78,6 +78,18 @@ function updateBigA() {
   const modelR = markerR.querySelector('a-entity');
   const allVisible = isCVisible && isAVisible && isRVisible;
 
+  if (lastShowState) {
+    // 已經顯示 bigA，只檢查 marker 是否還在
+    if (!allVisible) {
+      bigA.setAttribute('visible', false);
+      modelA.setAttribute('visible', true);
+      modelC.setAttribute('visible', true);
+      modelR.setAttribute('visible', true);
+      lastShowState = false;
+    }
+    return; // 不再做位置判斷
+  }
+
   if (allVisible) {
     const posC = new THREE.Vector3();
     const posA = new THREE.Vector3();
@@ -91,34 +103,19 @@ function updateBigA() {
     const isInOrder = (posA.x - posC.x > tolerance) && (posR.x - posA.x > tolerance);
 
     if (isInOrder) {
-      clearTimeout(hideBigATimeout);
-      if (!lastShowState) {
-        clearTimeout(showBigATimeout);
-        showBigATimeout = setTimeout(() => {
-          bigA.setAttribute('visible', true);
-          modelA.setAttribute('visible', false);
-          modelC.setAttribute('visible', false);
-          modelR.setAttribute('visible', false);
-          lastShowState = true;
-        }, 400); // 顯示延遲
-      }
-    } else {
       clearTimeout(showBigATimeout);
-      if (lastShowState) {
-        clearTimeout(hideBigATimeout);
-        hideBigATimeout = setTimeout(() => {
-          bigA.setAttribute('visible', false);
-          modelA.setAttribute('visible', true);
-          modelC.setAttribute('visible', true);
-          modelR.setAttribute('visible', true);
-          lastShowState = false;
-        }, 400); // 隱藏延遲
-      }
+      showBigATimeout = setTimeout(() => {
+        bigA.setAttribute('visible', true);
+        modelA.setAttribute('visible', false);
+        modelC.setAttribute('visible', false);
+        modelR.setAttribute('visible', false);
+        lastShowState = true;
+      }, 400);
+    } else {
+      clearTimeout(showBigATimeout); // 若不成立，取消顯示計時器
     }
   } else {
-    // marker 不全時，立刻取消顯示
     clearTimeout(showBigATimeout);
-    clearTimeout(hideBigATimeout);
     bigA.setAttribute('visible', false);
     modelA.setAttribute('visible', true);
     modelC.setAttribute('visible', true);
