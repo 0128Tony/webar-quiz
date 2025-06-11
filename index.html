@@ -60,72 +60,74 @@
   const bigA = document.querySelector('#bigA');
   const modelA = document.querySelector('#modelA');
 
+  let showBigATimeout = null;
+  let lastShowState = false;
+
   markerC.addEventListener('markerFound', () => { isCVisible = true; updateBigA(); });
-  markerC.addEventListener('markerLost', () => { isCVisible = false; updateBigA(); });
+  markerC.addEventListener('markerLost', () => { isCVisible = false; updateBigA(true); });
 
   markerA.addEventListener('markerFound', () => { isAVisible = true; updateBigA(); });
-  markerA.addEventListener('markerLost', () => { isAVisible = false; updateBigA(); });
+  markerA.addEventListener('markerLost', () => { isAVisible = false; updateBigA(true); });
 
   markerR.addEventListener('markerFound', () => { isRVisible = true; updateBigA(); });
-  markerR.addEventListener('markerLost', () => { isRVisible = false; updateBigA(); });
+  markerR.addEventListener('markerLost', () => { isRVisible = false; updateBigA(true); });
 
-  let showBigATimeout = null;
-let hideBigATimeout = null;
-let lastShowState = false;
+  function updateBigA(forceReset = false) {
+    const modelC = markerC.querySelector('a-entity');
+    const modelR = markerR.querySelector('a-entity');
+    const allVisible = isCVisible && isAVisible && isRVisible;
 
-function updateBigA() {
-  const modelC = markerC.querySelector('a-entity');
-  const modelR = markerR.querySelector('a-entity');
-  const allVisible = isCVisible && isAVisible && isRVisible;
-
-  if (lastShowState) {
-    // 已經顯示 bigA，只檢查 marker 是否還在
-    if (!allVisible) {
+    // 若已顯示 bigA，且任一 marker 消失則重置
+    if (lastShowState && (forceReset || !allVisible)) {
+      clearTimeout(showBigATimeout);
       bigA.setAttribute('visible', false);
       modelA.setAttribute('visible', true);
       modelC.setAttribute('visible', true);
       modelR.setAttribute('visible', true);
       lastShowState = false;
+      return;
     }
-    return; // 不再做位置判斷
-  }
 
-  if (allVisible) {
-    const posC = new THREE.Vector3();
-    const posA = new THREE.Vector3();
-    const posR = new THREE.Vector3();
+    // 尚未顯示，開始進行位置與方向判斷
+    if (!lastShowState && allVisible) {
+      const posC = new THREE.Vector3();
+      const posA = new THREE.Vector3();
+      const posR = new THREE.Vector3();
 
-    markerC.object3D.getWorldPosition(posC);
-    markerA.object3D.getWorldPosition(posA);
-    markerR.object3D.getWorldPosition(posR);
+      markerC.object3D.getWorldPosition(posC);
+      markerA.object3D.getWorldPosition(posA);
+      markerR.object3D.getWorldPosition(posR);
 
-    const tolerance = 3;
-    const isInOrder = (posA.x - posC.x > tolerance) && (posR.x - posA.x > tolerance);
+      const vecCA = new THREE.Vector3().subVectors(posA, posC);
+      const vecAR = new THREE.Vector3().subVectors(posR, posA);
 
-    if (isInOrder) {
-      clearTimeout(showBigATimeout);
-      showBigATimeout = setTimeout(() => {
-        bigA.setAttribute('visible', true);
-        modelA.setAttribute('visible', false);
-        modelC.setAttribute('visible', false);
-        modelR.setAttribute('visible', false);
-        lastShowState = true;
-      }, 400);
-    } else {
-      clearTimeout(showBigATimeout); // 若不成立，取消顯示計時器
+      const dot = vecCA.dot(vecAR);
+      const angle = vecCA.angleTo(vecAR); // 弧度制
+
+      const totalDistance = posC.distanceTo(posR);
+      const maxDistance = 3.0;
+
+      const angleThreshold = Math.PI / 6; // 30 度內視為直線
+      const isInOrder = dot > 0 && angle < angleThreshold && totalDistance < maxDistance;
+
+      if (isInOrder) {
+        clearTimeout(showBigATimeout);
+        showBigATimeout = setTimeout(() => {
+          bigA.setAttribute('visible', true);
+          modelA.setAttribute('visible', false);
+          modelC.setAttribute('visible', false);
+          modelR.setAttribute('visible', false);
+          lastShowState = true;
+        }, 400);
+      } else {
+        clearTimeout(showBigATimeout);
+      }
     }
-  } else {
-    clearTimeout(showBigATimeout);
-    bigA.setAttribute('visible', false);
-    modelA.setAttribute('visible', true);
-    modelC.setAttribute('visible', true);
-    modelR.setAttribute('visible', true);
-    lastShowState = false;
   }
-}
 </script>
 </body>
 </html>
+
 
 
 
