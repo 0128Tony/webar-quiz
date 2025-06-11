@@ -15,15 +15,15 @@
 <body>
   <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
 
-    <!-- Marker C 對應 C.glb -->
     <a-marker type="pattern" url="pattern-C.patt">
-      <a-entity 
-        gltf-model="C.glb" 
-        position="0 0.1 0" 
-        scale="0.2 0.2 0.2"
-        look-at="[camera]">
-      </a-entity>
-    </a-marker>
+  <a-entity 
+    gltf-model="C.glb" 
+    position="0 0 0"         <!-- 放回 Marker 中心 -->
+    scale="0.05 0.05 0.05"   <!-- 大幅縮小模型 -->
+    rotation="0 0 0"         <!-- 可先不要轉動 -->
+    look-at="[camera]">
+  </a-entity>
+</a-marker>
 
     <!-- Marker A 對應 A.glb -->
     <a-marker type="pattern" url="pattern-A.patt">
