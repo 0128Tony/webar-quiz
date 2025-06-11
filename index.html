@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
@@ -16,48 +15,67 @@
 <body>
   <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
 
-```
-<!-- Marker C 對應 C.glb -->
-<a-marker type="pattern" url="pattern-C.patt">
-  <a-entity 
-  gltf-model="A2.glb" 
-  position="0 0.1 0" 
-  scale="0.8 0.8 0.8"
-  look-at="[camera]"
-  animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.3 0">
-</a-entity>
-</a-marker>>
+    <!-- Marker C -->
+    <a-marker id="markerC" type="pattern" url="pattern-C.patt">
+      <a-entity gltf-model="A2.glb" position="0 0.1 0" scale="0.8 0.8 0.8"
+        look-at="[camera]"
+        animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.3 0">
+      </a-entity>
+    </a-marker>
 
+    <!-- Marker A -->
+    <a-marker id="markerA" type="pattern" url="pattern-A.patt">
+      <a-entity id="modelA" gltf-model="A2.glb" position="0 0.1 0" scale="0.8 0.8 0.8"
+        look-at="[camera]"
+        animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.3 0">
+      </a-entity>
 
-<!-- Marker A 對應 A.glb -->
-<a-marker type="pattern" url="pattern-A.patt">
-  <a-entity 
-  gltf-model="A2.glb" 
-  position="0 0.1 0" 
-  scale="0.8 0.8 0.8"
-  look-at="[camera]"
-  animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.3 0">
-</a-entity>
-</a-marker>
+      <!-- 大的 A 模型（初始隱藏） -->
+      <a-entity id="bigA" gltf-model="A2.glb" position="0 0.4 0" scale="1.5 1.5 1.5"
+        visible="false"
+        animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.6 0">
+      </a-entity>
+    </a-marker>
 
-<!-- Marker R 對應 R.glb -->
-<a-marker type="pattern" url="pattern-R.patt">
-<a-entity 
-  gltf-model="A2.glb" 
-  position="0 0.1 0" 
-  scale="0.8 0.8 0.8"
-  look-at="[camera]"
-  animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.3 0">
-</a-entity>
-</a-marker>
+    <!-- Marker R -->
+    <a-marker id="markerR" type="pattern" url="pattern-R.patt">
+      <a-entity gltf-model="A2.glb" position="0 0.1 0" scale="0.8 0.8 0.8"
+        look-at="[camera]"
+        animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.3 0">
+      </a-entity>
+    </a-marker>
 
-<!-- 相機 -->
-<a-entity camera></a-entity>
-```
-
+    <!-- 相機 -->
+    <a-entity camera></a-entity>
   </a-scene>
+
+  <script>
+    let isCVisible = false;
+    let isAVisible = false;
+    let isRVisible = false;
+
+    const markerC = document.querySelector('#markerC');
+    const markerA = document.querySelector('#markerA');
+    const markerR = document.querySelector('#markerR');
+    const bigA = document.querySelector('#bigA');
+
+    markerC.addEventListener('markerFound', () => { isCVisible = true; updateBigA(); });
+    markerC.addEventListener('markerLost', () => { isCVisible = false; updateBigA(); });
+
+    markerA.addEventListener('markerFound', () => { isAVisible = true; updateBigA(); });
+    markerA.addEventListener('markerLost', () => { isAVisible = false; updateBigA(); });
+
+    markerR.addEventListener('markerFound', () => { isRVisible = true; updateBigA(); });
+    markerR.addEventListener('markerLost', () => { isRVisible = false; updateBigA(); });
+
+    function updateBigA() {
+      const showBigA = isCVisible && isAVisible && isRVisible;
+      bigA.setAttribute('visible', showBigA);
+    }
+  </script>
 </body>
 </html>
+
 
 
 
