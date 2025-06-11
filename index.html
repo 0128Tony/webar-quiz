@@ -17,7 +17,7 @@
 
     <!-- Marker C -->
     <a-marker id="markerC" type="pattern" url="pattern-C.patt">
-      <a-entity gltf-model="A2.glb" position="0 0.1 0" scale="0.8 0.8 0.8"
+      <a-entity id="modelC" gltf-model="A2.glb" position="0 0.1 0" scale="0.8 0.8 0.8"
         look-at="[camera]"
         animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.3 0">
       </a-entity>
@@ -29,8 +29,6 @@
         look-at="[camera]"
         animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.3 0">
       </a-entity>
-
-      <!-- 大的 A 模型（初始隱藏） -->
       <a-entity id="bigA" gltf-model="A2.glb" position="0 0.4 0" scale="1.5 1.5 1.5"
         visible="false"
         animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.6 0">
@@ -39,7 +37,7 @@
 
     <!-- Marker R -->
     <a-marker id="markerR" type="pattern" url="pattern-R.patt">
-      <a-entity gltf-model="A2.glb" position="0 0.1 0" scale="0.8 0.8 0.8"
+      <a-entity id="modelR" gltf-model="A2.glb" position="0 0.1 0" scale="0.8 0.8 0.8"
         look-at="[camera]"
         animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.3 0">
       </a-entity>
@@ -57,6 +55,9 @@
     const markerC = document.querySelector('#markerC');
     const markerA = document.querySelector('#markerA');
     const markerR = document.querySelector('#markerR');
+    const modelC = document.querySelector('#modelC');
+    const modelA = document.querySelector('#modelA');
+    const modelR = document.querySelector('#modelR');
     const bigA = document.querySelector('#bigA');
 
     markerC.addEventListener('markerFound', () => { isCVisible = true; updateBigA(); });
@@ -68,23 +69,42 @@
     markerR.addEventListener('markerFound', () => { isRVisible = true; updateBigA(); });
     markerR.addEventListener('markerLost', () => { isRVisible = false; updateBigA(); });
 
-function updateBigA() {
-  const showBigA = isCVisible && isAVisible && isRVisible;
-  bigA.setAttribute('visible', showBigA);
+    function updateBigA() {
+      const allVisible = isCVisible && isAVisible && isRVisible;
 
-  // 同步控制小模型的顯示狀態
-  const modelA = document.querySelector('#modelA');
-  const modelC = markerC.querySelector('a-entity');
-  const modelR = markerR.querySelector('a-entity');
+      if (!allVisible) {
+        bigA.setAttribute('visible', false);
+        modelA.setAttribute('visible', true);
+        modelC.setAttribute('visible', true);
+        modelR.setAttribute('visible', true);
+        return;
+      }
 
-  modelA.setAttribute('visible', !showBigA);
-  modelC.setAttribute('visible', !showBigA);
-  modelR.setAttribute('visible', !showBigA);
-}
+      const posC = markerC.object3D.position;
+      const posA = markerA.object3D.position;
+      const posR = markerR.object3D.position;
+
+      const distCA = posC.distanceTo(posA);
+      const distAR = posA.distanceTo(posR);
+      const distCR = posC.distanceTo(posR);
+
+      const threshold = 1.0; // 公尺，可依需要調整為 0.5~1.5
+
+      if (distCA < threshold && distAR < threshold && distCR < threshold) {
+        bigA.setAttribute('visible', true);
+        modelA.setAttribute('visible', false);
+        modelC.setAttribute('visible', false);
+        modelR.setAttribute('visible', false);
+      } else {
+        bigA.setAttribute('visible', false);
+        modelA.setAttribute('visible', true);
+        modelC.setAttribute('visible', true);
+        modelR.setAttribute('visible', true);
+      }
+    }
   </script>
 </body>
 </html>
-
 
 
 
