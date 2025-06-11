@@ -88,7 +88,7 @@
       const distAR = posA.distanceTo(posR);
       const distCR = posC.distanceTo(posR);
 
-      const threshold = 1.0; // 公尺，可依需要調整為 0.5~1.5
+      const threshold = 2.0; // 公尺，可依需要調整為 0.5~1.5
 
       if (distCA < threshold && distAR < threshold && distCR < threshold) {
         bigA.setAttribute('visible', true);
