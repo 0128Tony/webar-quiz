@@ -68,7 +68,7 @@
     markerR.addEventListener('markerFound', () => { isRVisible = true; updateBigA(); });
     markerR.addEventListener('markerLost', () => { isRVisible = false; updateBigA(); });
 
-    ffunction updateBigA() {
+function updateBigA() {
   const showBigA = isCVisible && isAVisible && isRVisible;
   bigA.setAttribute('visible', showBigA);
 
