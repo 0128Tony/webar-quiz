@@ -97,9 +97,14 @@
         return;
       }
 
-      const posC = markerC.object3D.position;
-      const posA = markerA.object3D.position;
-      const posR = markerR.object3D.position;
+      const posC = new THREE.Vector3();
+      const posA = new THREE.Vector3();
+      const posR = new THREE.Vector3();
+      
+      markerC.object3D.getWorldPosition(posC);
+      markerA.object3D.getWorldPosition(posA);
+      markerR.object3D.getWorldPosition(posR);
+
 
       const distCA = posC.distanceTo(posA);
       const distAR = posA.distanceTo(posR);
