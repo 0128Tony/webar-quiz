@@ -10,9 +10,24 @@
       margin: 0;
       overflow: hidden;
     }
+    #distance-info {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      font-family: sans-serif;
+      font-size: 14px;
+      padding: 10px;
+      border-radius: 8px;
+      z-index: 999;
+      white-space: pre-line;
+    }
   </style>
 </head>
 <body>
+  <div id="distance-info">距離偵測中...</div>
+
   <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
 
     <!-- Marker C -->
@@ -59,6 +74,7 @@
     const modelA = document.querySelector('#modelA');
     const modelR = document.querySelector('#modelR');
     const bigA = document.querySelector('#bigA');
+    const infoBox = document.getElementById('distance-info');
 
     markerC.addEventListener('markerFound', () => { isCVisible = true; updateBigA(); });
     markerC.addEventListener('markerLost', () => { isCVisible = false; updateBigA(); });
@@ -77,6 +93,7 @@
         modelA.setAttribute('visible', true);
         modelC.setAttribute('visible', true);
         modelR.setAttribute('visible', true);
+        infoBox.textContent = '尚未全部偵測到三個 marker';
         return;
       }
 
@@ -88,7 +105,10 @@
       const distAR = posA.distanceTo(posR);
       const distCR = posC.distanceTo(posR);
 
-      const threshold = 2.0; // 公尺，可依需要調整為 0.5~1.5
+      const threshold = 1.0;
+
+      // 顯示距離
+      updateDistanceDisplay(distCA, distAR, distCR);
 
       if (distCA < threshold && distAR < threshold && distCR < threshold) {
         bigA.setAttribute('visible', true);
@@ -102,9 +122,19 @@
         modelR.setAttribute('visible', true);
       }
     }
+
+    function updateDistanceDisplay(dCA, dAR, dCR) {
+      infoBox.textContent = `
+距離資訊（單位：公尺）：
+C ↔ A：${dCA.toFixed(2)}
+A ↔ R：${dAR.toFixed(2)}
+C ↔ R：${dCR.toFixed(2)}
+`;
+    }
   </script>
 </body>
 </html>
+
 
 
 
