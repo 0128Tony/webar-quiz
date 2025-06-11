@@ -15,39 +15,83 @@
 <body>
   <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
 
-    <!-- Marker C 對應 C.glb -->
-    <a-marker type="pattern" url="pattern-C.patt">
+    <!-- Marker C -->
+    <a-marker id="markerC" type="pattern" url="pattern-C.patt">
+      <a-entity id="modelC"
+        gltf-model="2.glb"
+        position="0 0.1 0"
+        scale="0.5 0.5 0.5"
+        look-at="[camera]">
+      </a-entity>
+    </a-marker>
+
+    <!-- Marker A -->
+    <a-marker type="pattern" url="pattern-A.patt">
       <a-entity 
-        gltf-model="2.glb" 
+        gltf-model="R.glb" 
         position="0 0.1 0" 
         scale="0.2 0.2 0.2"
         look-at="[camera]">
       </a-entity>
     </a-marker>
 
-    <!-- Marker A 對應 A.glb -->
-    <a-marker type="pattern" url="pattern-A.patt">
-      <a-entity 
-        gltf-model="A2.glb" 
-        position="0 0.1 0" 
-        scale="0.6 0.6 0.6"
+    <!-- Marker R -->
+    <a-marker id="markerR" type="pattern" url="pattern-R.patt">
+      <a-entity id="modelR"
+        gltf-model="R.glb"
+        position="0 0.1 0"
+        scale="0.2 0.2 0.2"
         look-at="[camera]">
       </a-entity>
     </a-marker>
 
-    <!-- Marker R 對應 R.glb -->
-    <a-marker type="pattern" url="pattern-R.patt">
-    <a-entity 
-      gltf-model="R.glb" 
-      position="0 0.1 0" 
-      scale="0.2 0.2 0.2"
-      look-at="[camera]">
+    <!-- 新 GLB 模型（初始隱藏） -->
+    <a-entity id="comboModel"
+              gltf-model="A2.glb"
+              position="0 0.1 0"
+              scale="0.3 0.3 0.3"
+              visible="false">
     </a-entity>
-    </a-marker>
 
     <!-- 相機 -->
     <a-entity camera></a-entity>
   </a-scene>
+
+  <script>
+    let isCVisible = false;
+    let isRVisible = false;
+
+    const comboModel = document.querySelector('#comboModel');
+    const markerC = document.querySelector('#markerC');
+    const markerR = document.querySelector('#markerR');
+    const modelC = document.querySelector('#modelC');
+    const modelR = document.querySelector('#modelR');
+
+    markerC.addEventListener('markerFound', () => {
+      isCVisible = true;
+      checkCombo();
+    });
+    markerC.addEventListener('markerLost', () => {
+      isCVisible = false;
+      checkCombo();
+    });
+
+    markerR.addEventListener('markerFound', () => {
+      isRVisible = true;
+      checkCombo();
+    });
+    markerR.addEventListener('markerLost', () => {
+      isRVisible = false;
+      checkCombo();
+    });
+
+    function checkCombo() {
+      const showCombo = isCVisible && isRVisible;
+      comboModel.setAttribute('visible', showCombo);
+      modelC.setAttribute('visible', !showCombo);
+      modelR.setAttribute('visible', !showCombo);
+    }
+  </script>
 </body>
 </html>
 
