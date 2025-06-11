@@ -60,71 +60,76 @@
   const bigA = document.querySelector('#bigA');
   const modelA = document.querySelector('#modelA');
 
-  let showBigATimeout = null;
+  const modelC = markerC.querySelector('a-entity');
+  const modelR = markerR.querySelector('a-entity');
+
   let lastShowState = false;
+  let consecutiveValidFrames = 0;
+  const requiredValidFrames = 10; // 至少連續 10 次符合條件（約 0.16 秒）
 
-  markerC.addEventListener('markerFound', () => { isCVisible = true; updateBigA(); });
-  markerC.addEventListener('markerLost', () => { isCVisible = false; updateBigA(true); });
+  markerC.addEventListener('markerFound', () => { isCVisible = true; });
+  markerC.addEventListener('markerLost', () => { isCVisible = false; resetBigA(); });
 
-  markerA.addEventListener('markerFound', () => { isAVisible = true; updateBigA(); });
-  markerA.addEventListener('markerLost', () => { isAVisible = false; updateBigA(true); });
+  markerA.addEventListener('markerFound', () => { isAVisible = true; });
+  markerA.addEventListener('markerLost', () => { isAVisible = false; resetBigA(); });
 
-  markerR.addEventListener('markerFound', () => { isRVisible = true; updateBigA(); });
-  markerR.addEventListener('markerLost', () => { isRVisible = false; updateBigA(true); });
+  markerR.addEventListener('markerFound', () => { isRVisible = true; });
+  markerR.addEventListener('markerLost', () => { isRVisible = false; resetBigA(); });
 
-  function updateBigA(forceReset = false) {
-    const modelC = markerC.querySelector('a-entity');
-    const modelR = markerR.querySelector('a-entity');
-    const allVisible = isCVisible && isAVisible && isRVisible;
-
-    // 若已顯示 bigA，且任一 marker 消失則重置
-    if (lastShowState && (forceReset || !allVisible)) {
-      clearTimeout(showBigATimeout);
+  function resetBigA() {
+    if (lastShowState) {
       bigA.setAttribute('visible', false);
       modelA.setAttribute('visible', true);
       modelC.setAttribute('visible', true);
       modelR.setAttribute('visible', true);
       lastShowState = false;
+      consecutiveValidFrames = 0;
+    }
+  }
+
+  function updateBigA() {
+    if (!isCVisible || !isAVisible || !isRVisible || lastShowState) {
       return;
     }
 
-    // 尚未顯示，開始進行位置與方向判斷
-    if (!lastShowState && allVisible) {
-      const posC = new THREE.Vector3();
-      const posA = new THREE.Vector3();
-      const posR = new THREE.Vector3();
+    const posC = new THREE.Vector3();
+    const posA = new THREE.Vector3();
+    const posR = new THREE.Vector3();
 
-      markerC.object3D.getWorldPosition(posC);
-      markerA.object3D.getWorldPosition(posA);
-      markerR.object3D.getWorldPosition(posR);
+    markerC.object3D.getWorldPosition(posC);
+    markerA.object3D.getWorldPosition(posA);
+    markerR.object3D.getWorldPosition(posR);
 
-      const vecCA = new THREE.Vector3().subVectors(posA, posC);
-      const vecAR = new THREE.Vector3().subVectors(posR, posA);
+    const vecCA = new THREE.Vector3().subVectors(posA, posC);
+    const vecAR = new THREE.Vector3().subVectors(posR, posA);
 
-      const dot = vecCA.dot(vecAR);
-      const angle = vecCA.angleTo(vecAR); // 弧度制
+    const dot = vecCA.dot(vecAR);
+    const angle = vecCA.angleTo(vecAR);
+    const totalDistance = posC.distanceTo(posR);
 
-      const totalDistance = posC.distanceTo(posR);
-      const maxDistance = 3.0;
+    const isInOrder =
+      dot > 0 &&
+      angle < Math.PI / 4 &&        // 放寬到 45 度內
+      totalDistance < 3.0;          // 控制最大距離
 
-      const angleThreshold = Math.PI / 6; // 30 度內視為直線
-      const isInOrder = dot > 0 && angle < angleThreshold && totalDistance < maxDistance;
-
-      if (isInOrder) {
-        clearTimeout(showBigATimeout);
-        showBigATimeout = setTimeout(() => {
-          bigA.setAttribute('visible', true);
-          modelA.setAttribute('visible', false);
-          modelC.setAttribute('visible', false);
-          modelR.setAttribute('visible', false);
-          lastShowState = true;
-        }, 400);
-      } else {
-        clearTimeout(showBigATimeout);
+    if (isInOrder) {
+      consecutiveValidFrames++;
+      if (consecutiveValidFrames >= requiredValidFrames) {
+        bigA.setAttribute('visible', true);
+        modelA.setAttribute('visible', false);
+        modelC.setAttribute('visible', false);
+        modelR.setAttribute('visible', false);
+        lastShowState = true;
       }
+    } else {
+      consecutiveValidFrames = 0;
     }
   }
+
+  // 持續以高頻率檢查狀態（大約每 frame 60fps）
+  setInterval(updateBigA, 16); // 約每 16ms 一次
 </script>
+
 </body>
 </html>
 
