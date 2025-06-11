@@ -70,26 +70,29 @@
   markerR.addEventListener('markerLost', () => { isRVisible = false; updateBigA(); });
 
   let showBigATimeout = null;
-  let lastShowState = false;
+let hideBigATimeout = null;
+let lastShowState = false;
 
-  function updateBigA() {
-    const modelC = markerC.querySelector('a-entity');
-    const modelR = markerR.querySelector('a-entity');
-    const allVisible = isCVisible && isAVisible && isRVisible;
+function updateBigA() {
+  const modelC = markerC.querySelector('a-entity');
+  const modelR = markerR.querySelector('a-entity');
+  const allVisible = isCVisible && isAVisible && isRVisible;
 
-    if (allVisible) {
-      const posC = new THREE.Vector3();
-      const posA = new THREE.Vector3();
-      const posR = new THREE.Vector3();
+  if (allVisible) {
+    const posC = new THREE.Vector3();
+    const posA = new THREE.Vector3();
+    const posR = new THREE.Vector3();
 
-      markerC.object3D.getWorldPosition(posC);
-      markerA.object3D.getWorldPosition(posA);
-      markerR.object3D.getWorldPosition(posR);
+    markerC.object3D.getWorldPosition(posC);
+    markerA.object3D.getWorldPosition(posA);
+    markerR.object3D.getWorldPosition(posR);
 
-      const tolerance = 0.1;
-      const isInOrder = (posA.x - posC.x > tolerance) && (posR.x - posA.x > tolerance);
+    const tolerance = 0.1;
+    const isInOrder = (posA.x - posC.x > tolerance) && (posR.x - posA.x > tolerance);
 
-      if (isInOrder && !lastShowState) {
+    if (isInOrder) {
+      clearTimeout(hideBigATimeout);
+      if (!lastShowState) {
         clearTimeout(showBigATimeout);
         showBigATimeout = setTimeout(() => {
           bigA.setAttribute('visible', true);
@@ -97,24 +100,32 @@
           modelC.setAttribute('visible', false);
           modelR.setAttribute('visible', false);
           lastShowState = true;
-        }, 200); // 500 毫秒穩定後才顯示
-      } else if (!isInOrder && lastShowState) {
-        clearTimeout(showBigATimeout);
-        bigA.setAttribute('visible', false);
-        modelA.setAttribute('visible', true);
-        modelC.setAttribute('visible', true);
-        modelR.setAttribute('visible', true);
-        lastShowState = false;
+        }, 400); // 顯示延遲
       }
     } else {
       clearTimeout(showBigATimeout);
-      bigA.setAttribute('visible', false);
-      modelA.setAttribute('visible', true);
-      modelC.setAttribute('visible', true);
-      modelR.setAttribute('visible', true);
-      lastShowState = false;
+      if (lastShowState) {
+        clearTimeout(hideBigATimeout);
+        hideBigATimeout = setTimeout(() => {
+          bigA.setAttribute('visible', false);
+          modelA.setAttribute('visible', true);
+          modelC.setAttribute('visible', true);
+          modelR.setAttribute('visible', true);
+          lastShowState = false;
+        }, 400); // 隱藏延遲
+      }
     }
+  } else {
+    // marker 不全時，立刻取消顯示
+    clearTimeout(showBigATimeout);
+    clearTimeout(hideBigATimeout);
+    bigA.setAttribute('visible', false);
+    modelA.setAttribute('visible', true);
+    modelC.setAttribute('visible', true);
+    modelR.setAttribute('visible', true);
+    lastShowState = false;
   }
+}
 </script>
 </body>
 </html>
