@@ -32,8 +32,8 @@
 
       <!-- 大的 A 模型（初始隱藏） -->
           <a-entity id="bigA" gltf-model="AED.glb" position="0 0.4 0" scale="0.03 0.03 0.03"
-              visible="false"
-              look-at="[camera]"
+                visible="false"
+               rotation="0 180 0"  <!-- 這裡根據你的模型朝向調整 -->
               animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.6 0">
           </a-entity>
     </a-marker>
