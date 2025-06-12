@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>AR 顯示 A E D 與 C 模型</title>
+  <title>AR 顯示 A E D C Diamond Stick 模型</title>
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
   <style>
@@ -13,121 +13,137 @@
   </style>
 </head>
 <body>
-  <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+<a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
 
-    <!-- A -->
-    <a-marker id="markerA" type="pattern" url="pattern-A.patt">
-      <a-entity gltf-model="Acar.glb" position="0 0.1 0" scale="0.1 0.1 0.1"
-        look-at="[camera]"
-        animation="property: position; dir: alternate; dur: 1000; loop: true; to: 0 0.3 0"></a-entity>
-    </a-marker>
+  <!-- A -->
+  <a-marker id="markerA" type="pattern" url="pattern-A.patt">
+    <a-entity gltf-model="Acar.glb" position="0 0.1 0" scale="0.1 0.1 0.1"
+              look-at="[camera]"
+              animation="property: position; dir: alternate; dur: 1000; loop: true; to: 0 0.3 0"></a-entity>
+  </a-marker>
 
-    <!-- E -->
-    <a-marker id="markerE" type="pattern" url="pattern-E.patt">
-      <a-entity id="modelE" gltf-model="Ecar.glb" position="0 0.1 0" scale="0.1 0.1 0.1"
-        look-at="[camera]"
-        animation="property: position; dir: alternate; dur: 1000; loop: true; to: 0 0.3 0"></a-entity>
+  <!-- E -->
+  <a-marker id="markerE" type="pattern" url="pattern-E.patt">
+    <a-entity id="modelE" gltf-model="Ecar.glb" position="0 0.1 0" scale="0.1 0.1 0.1"
+              look-at="[camera]"
+              animation="property: position; dir: alternate; dur: 1000; loop: true; to: 0 0.3 0"></a-entity>
 
-      <!-- 合體 AED 模型 -->
-      <a-entity id="bigA" gltf-model="AED.glb" position="0 0.4 0" rotation="0 -90 0" scale="0.03 0.03 0.03" visible="false"
-        animation="property: position; dir: alternate; dur: 1000; loop: true; to: 0 0.6 0"></a-entity>
-    </a-marker>
+    <!-- AED 合體 -->
+    <a-entity id="bigA" gltf-model="AED.glb" position="0 0.4 0" rotation="0 -90 0" scale="0.03 0.03 0.03" visible="false"
+              animation="property: position; dir: alternate; dur: 1000; loop: true; to: 0 0.6 0"></a-entity>
+  </a-marker>
 
-    <!-- D -->
-    <a-marker id="markerD" type="pattern" url="pattern-D.patt">
-      <a-entity gltf-model="Dcar.glb" position="0 0.1 0" scale="0.1 0.1 0.1"
-        look-at="[camera]"
-        animation="property: position; dir: alternate; dur: 1000; loop: true; to: 0 0.3 0"></a-entity>
-    </a-marker>
+  <!-- D -->
+  <a-marker id="markerD" type="pattern" url="pattern-D.patt">
+    <a-entity gltf-model="Dcar.glb" position="0 0.1 0" scale="0.1 0.1 0.1"
+              look-at="[camera]"
+              animation="property: position; dir: alternate; dur: 1000; loop: true; to: 0 0.3 0"></a-entity>
+  </a-marker>
 
-    <!-- C -->
-<a-marker type="pattern" url="pattern-C.patt">
-  <a-entity gltf-model="C.glb"
-            position="0 0.5 -0.5"
-            rotation="-90 0 0"
-            scale="0.01 0.01 0.01"
-            look-at="[camera]"
-            animation="property: rotation; to: -90 360 0; loop: true; dur: 2000">
-  </a-entity>
-</a-marker>
-    <!-- Camera -->
-    <a-entity camera></a-entity>
-  </a-scene>
+  <!-- C -->
+  <a-marker type="pattern" url="pattern-C.patt">
+    <a-entity gltf-model="C.glb"
+              position="0 0.5 -0.5"
+              rotation="-90 0 0"
+              scale="0.01 0.01 0.01"
+              look-at="[camera]"
+              animation="property: rotation; to: -90 360 0; loop: true; dur: 2000">
+    </a-entity>
+  </a-marker>
 
-  <script>
-    let isAVisible = false;
-    let isEVisible = false;
-    let isDVisible = false;
+  <!-- Diamond -->
+  <a-marker type="pattern" url="pattern-Diamond_1.patt">
+    <a-entity gltf-model="diamond.glb"
+              position="0 0.3 0"
+              rotation="-90 0 0"
+              scale="0.02 0.02 0.02"
+              animation="property: rotation; to: -90 360 0; loop: true; dur: 3000">
+    </a-entity>
+  </a-marker>
 
-    const markerA = document.querySelector('#markerA');
-    const markerE = document.querySelector('#markerE');
-    const markerD = document.querySelector('#markerD');
-    const bigA = document.querySelector('#bigA');
-    const modelE = document.querySelector('#modelE');
+  <!-- Stick -->
+  <a-marker type="pattern" url="pattern-Stick_1.patt">
+    <a-entity gltf-model="stick.glb"
+              position="0 0.3 0"
+              rotation="-90 0 0"
+              scale="0.02 0.02 0.02"
+              animation="property: rotation; to: -90 360 0; loop: true; dur: 3000">
+    </a-entity>
+  </a-marker>
 
-    const modelA = markerA.querySelector('a-entity');
-    const modelD = markerD.querySelector('a-entity');
+  <a-entity camera></a-entity>
+</a-scene>
 
-    let lastShowState = false;
-    let consecutiveValidFrames = 0;
-    const requiredValidFrames = 10;
+<script>
+  let isAVisible = false, isEVisible = false, isDVisible = false;
 
-    markerA.addEventListener('markerFound', () => { isAVisible = true; });
-    markerA.addEventListener('markerLost', () => { isAVisible = false; resetBigA(); });
+  const markerA = document.querySelector('#markerA');
+  const markerE = document.querySelector('#markerE');
+  const markerD = document.querySelector('#markerD');
+  const bigA = document.querySelector('#bigA');
+  const modelE = document.querySelector('#modelE');
+  const modelA = markerA.querySelector('a-entity');
+  const modelD = markerD.querySelector('a-entity');
 
-    markerE.addEventListener('markerFound', () => { isEVisible = true; });
-    markerE.addEventListener('markerLost', () => { isEVisible = false; resetBigA(); });
+  let lastShowState = false;
+  let consecutiveValidFrames = 0;
+  const requiredValidFrames = 10;
 
-    markerD.addEventListener('markerFound', () => { isDVisible = true; });
-    markerD.addEventListener('markerLost', () => { isDVisible = false; resetBigA(); });
+  markerA.addEventListener('markerFound', () => { isAVisible = true; });
+  markerA.addEventListener('markerLost', () => { isAVisible = false; resetBigA(); });
 
-    function resetBigA() {
-      if (lastShowState) {
-        bigA.setAttribute('visible', false);
-        modelA.setAttribute('visible', true);
-        modelE.setAttribute('visible', true);
-        modelD.setAttribute('visible', true);
-        lastShowState = false;
-        consecutiveValidFrames = 0;
-      }
+  markerE.addEventListener('markerFound', () => { isEVisible = true; });
+  markerE.addEventListener('markerLost', () => { isEVisible = false; resetBigA(); });
+
+  markerD.addEventListener('markerFound', () => { isDVisible = true; });
+  markerD.addEventListener('markerLost', () => { isDVisible = false; resetBigA(); });
+
+  function resetBigA() {
+    if (lastShowState) {
+      bigA.setAttribute('visible', false);
+      modelA.setAttribute('visible', true);
+      modelE.setAttribute('visible', true);
+      modelD.setAttribute('visible', true);
+      lastShowState = false;
+      consecutiveValidFrames = 0;
     }
+  }
 
-    function updateBigA() {
-      if (!isAVisible || !isEVisible || !isDVisible || lastShowState) return;
+  function updateBigA() {
+    if (!isAVisible || !isEVisible || !isDVisible || lastShowState) return;
 
-      const posA = new THREE.Vector3();
-      const posE = new THREE.Vector3();
-      const posD = new THREE.Vector3();
+    const posA = new THREE.Vector3();
+    const posE = new THREE.Vector3();
+    const posD = new THREE.Vector3();
 
-      markerA.object3D.getWorldPosition(posA);
-      markerE.object3D.getWorldPosition(posE);
-      markerD.object3D.getWorldPosition(posD);
+    markerA.object3D.getWorldPosition(posA);
+    markerE.object3D.getWorldPosition(posE);
+    markerD.object3D.getWorldPosition(posD);
 
-      const vecAE = new THREE.Vector3().subVectors(posE, posA);
-      const vecED = new THREE.Vector3().subVectors(posD, posE);
+    const vecAE = new THREE.Vector3().subVectors(posE, posA);
+    const vecED = new THREE.Vector3().subVectors(posD, posE);
+    const dot = vecAE.dot(vecED);
+    const angle = vecAE.angleTo(vecED);
+    const totalDistance = posA.distanceTo(posD);
 
-      const dot = vecAE.dot(vecED);
-      const angle = vecAE.angleTo(vecED);
-      const totalDistance = posA.distanceTo(posD);
+    const isInOrder = dot > 0 && angle < Math.PI / 4 && totalDistance < 3.0;
 
-      const isInOrder = dot > 0 && angle < Math.PI / 4 && totalDistance < 3.0;
-
-      if (isInOrder) {
-        consecutiveValidFrames++;
-        if (consecutiveValidFrames >= requiredValidFrames) {
-          bigA.setAttribute('visible', true);
-          modelA.setAttribute('visible', false);
-          modelE.setAttribute('visible', false);
-          modelD.setAttribute('visible', false);
-          lastShowState = true;
-        }
-      } else {
-        consecutiveValidFrames = 0;
+    if (isInOrder) {
+      consecutiveValidFrames++;
+      if (consecutiveValidFrames >= requiredValidFrames) {
+        bigA.setAttribute('visible', true);
+        modelA.setAttribute('visible', false);
+        modelE.setAttribute('visible', false);
+        modelD.setAttribute('visible', false);
+        lastShowState = true;
       }
+    } else {
+      consecutiveValidFrames = 0;
     }
+  }
 
-    setInterval(updateBigA, 16);
-  </script>
+  setInterval(updateBigA, 16);
+</script>
 </body>
 </html>
 
