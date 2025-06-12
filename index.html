@@ -17,7 +17,7 @@
 
     <!-- Marker C -->
     <a-marker id="markerC" type="pattern" url="pattern-C.patt">
-      <a-entity gltf-model="Acar.glb" position="0 0.1 0" scale="0.2 0.2 0.2"
+      <a-entity gltf-model="Acar.glb" position="0 0.1 0" scale="0.1 0.1 0.1"
         look-at="[camera]"
         animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.3 0">
       </a-entity>
@@ -25,22 +25,22 @@
 
     <!-- Marker A -->
     <a-marker id="markerA" type="pattern" url="pattern-A.patt">
-      <a-entity id="modelA" gltf-model="Ecar.glb" position="0 0.1 0" scale="0.2 0.2 0.2"
+      <a-entity id="modelA" gltf-model="Ecar.glb" position="0 0.1 0" scale="0.1 0.1 0.1"
         look-at="[camera]"
         animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.3 0">
       </a-entity>
 
       <!-- 大的 A 模型（初始隱藏） -->
-      <a-entity id="bigA" gltf-model="AED.glb" position="0 0.4 0" scale="0.05 0.05 0.05"
-        visible="false"
-        look-at="[camera]"
-        animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.6 0">
-      </a-entity>
+          <a-entity id="bigA" gltf-model="AED.glb" position="0 0.4 0" scale="0.03 0.03 0.03"
+              visible="false"
+              look-at="[camera]"
+              animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.6 0">
+          </a-entity>
     </a-marker>
 
     <!-- Marker R -->
     <a-marker id="markerR" type="pattern" url="pattern-R.patt">
-      <a-entity gltf-model="Dcar.glb" position="0 0.1 0" scale="0.2 0.2 0.2"
+      <a-entity gltf-model="Dcar.glb" position="0 0.1 0" scale="0.1 0.1 0.1"
         look-at="[camera]"
         animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.3 0">
       </a-entity>
