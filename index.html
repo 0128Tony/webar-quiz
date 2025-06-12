@@ -14,6 +14,7 @@
 </head>
 <body>
 <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+  <a-entity cursor="rayOrigin: mouse"></a-entity>
 
   <!-- A -->
   <a-marker id="markerA" type="pattern" url="pattern-A.patt">
@@ -28,17 +29,21 @@
               look-at="[camera]"
               animation="property: position; dir: alternate; dur: 1000; loop: true; to: 0 0.3 0"></a-entity>
 
-    <!-- AED 合體 -->
-<a-entity id="bigA"
-          gltf-model="AED.glb"
-          position="0 0.4 0"
-          rotation="0 -90 0"
-          scale="0.03 0.03 0.03"
-          visible="false"
-          animation__float="property: position; dir: alternate; dur: 1000; loop: true; to: 0 0.6 0"
-          animation__spin="property: rotation; to: 0 270 0; loop: true; dur: 4000">
-</a-entity>
+    <!-- AED 合體模型（含點擊區） -->
+    <a-entity id="bigA-wrapper" visible="false">
+      <!-- 點擊區 -->
+      <a-box id="bigA-hitbox" position="0 0.4 0" depth="1" height="1" width="1"
+             opacity="0" transparent="true" class="clickable"></a-box>
 
+      <!-- 模型 -->
+      <a-entity id="bigA"
+                gltf-model="AED.glb"
+                position="0 0.4 0"
+                rotation="0 -90 0"
+                scale="0.03 0.03 0.03"
+                animation__float="property: position; dir: alternate; dur: 1000; loop: true; to: 0 0.6 0">
+      </a-entity>
+    </a-entity>
 
     <!-- AE86 出現在 A 與 E 中間 -->
     <a-entity id="ae86" gltf-model="toyota_ae86.glb" position="0 0 0" scale="0.05 0.05 0.05"
@@ -69,11 +74,16 @@
 <script>
   let isAVisible = false, isEVisible = false, isDVisible = false;
   let aeVisible = false;
+  let isRotating = false;
 
   const markerA = document.querySelector('#markerA');
   const markerE = document.querySelector('#markerE');
   const markerD = document.querySelector('#markerD');
+
+  const bigAWrapper = document.querySelector('#bigA-wrapper');
   const bigA = document.querySelector('#bigA');
+  const bigAHitbox = document.querySelector('#bigA-hitbox');
+
   const modelE = document.querySelector('#modelE');
   const modelA = markerA.querySelector('a-entity');
   const modelD = markerD.querySelector('a-entity');
@@ -94,12 +104,16 @@
 
   function resetBigA() {
     if (lastShowState) {
-      bigA.setAttribute('visible', false);
+      bigAWrapper.setAttribute('visible', false);
       modelA.setAttribute('visible', true);
       modelE.setAttribute('visible', true);
       modelD.setAttribute('visible', true);
       lastShowState = false;
       consecutiveValidFrames = 0;
+
+      // 停止旋轉動畫
+      bigA.removeAttribute('animation__spin');
+      isRotating = false;
     }
 
     if (aeVisible) {
@@ -149,7 +163,7 @@
     if (isInOrder) {
       consecutiveValidFrames++;
       if (consecutiveValidFrames >= requiredValidFrames) {
-        bigA.setAttribute('visible', true);
+        bigAWrapper.setAttribute('visible', true);
         modelA.setAttribute('visible', false);
         modelE.setAttribute('visible', false);
         modelD.setAttribute('visible', false);
@@ -160,10 +174,27 @@
     }
   }
 
+  // 點擊切換旋轉動畫
+  bigAHitbox.addEventListener('click', () => {
+    if (!isRotating) {
+      bigA.setAttribute('animation__spin', {
+        property: 'rotation',
+        to: '0 270 0',
+        loop: true,
+        dur: 4000
+      });
+      isRotating = true;
+    } else {
+      bigA.removeAttribute('animation__spin');
+      isRotating = false;
+    }
+  });
+
   setInterval(updateBigA, 16);
 </script>
 </body>
 </html>
+
 
 
 
