@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>AR顯示A E D 字母</title>
+  <title> AR顯示A E D 字母</title>
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
   <style>
@@ -31,11 +31,17 @@
       </a-entity>
 
       <!-- 大的 A 模型（初始隱藏） -->
-          <a-entity id="bigA" gltf-model="AED.glb" position="0 0.4 0" scale="0.03 0.03 0.03"
-                visible="false"
-               rotation="0 180 0"  <!-- 這裡根據你的模型朝向調整 -->
-              animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.6 0">
-          </a-entity>
+          <a-entity id="bigA"
+          gltf-model="AED.glb"
+          position="0 0.4 0"
+          rotation="0 90 0"
+          scale="0.03 0.03 0.03"
+          visible="false"
+          animation="property: position; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 0 0.6 0">
+</a-entity>
+
+    </a-marker>
+
     </a-marker>
 
     <!-- Marker R -->
