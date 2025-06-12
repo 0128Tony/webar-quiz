@@ -31,6 +31,10 @@
     <!-- AED 合體 -->
     <a-entity id="bigA" gltf-model="AED.glb" position="0 0.4 0" rotation="0 -90 0" scale="0.03 0.03 0.03" visible="false"
               animation="property: position; dir: alternate; dur: 1000; loop: true; to: 0 0.6 0"></a-entity>
+
+    <!-- AE86 出現在 A 與 E 中間 -->
+    <a-entity id="ae86" gltf-model="toyota_ae86.glb" position="0 0 0" scale="0.05 0.05 0.05"
+              rotation="0 0 0" visible="false" look-at="[camera]"></a-entity>
   </a-marker>
 
   <!-- D -->
@@ -40,9 +44,9 @@
               animation="property: position; dir: alternate; dur: 1000; loop: true; to: 0 0.3 0"></a-entity>
   </a-marker>
 
-  <!-- C -->
-  <a-marker type="pattern" url="pattern-C.patt">
-    <a-entity gltf-model="C.glb"
+  <!-- R -->
+  <a-marker type="pattern" url="pattern-R.patt">
+    <a-entity gltf-model="toyota_ae86.glb"
               position="0 0.1 -0.5"
               rotation="-90 0 0"
               scale="0.5 0.5 0.5"
@@ -51,31 +55,12 @@
     </a-entity>
   </a-marker>
 
-  <!-- Diamond -->
-  <a-marker type="pattern" url="pattern-stick.patt">
-    <a-entity gltf-model="C.glb"
-              position="0 0.3 0"
-              rotation="-90 0 0"
-              scale="0.5 0.5 0.5"
-              animation="property: rotation; to: -90 360 0; loop: true; dur: 3000">
-    </a-entity>
-  </a-marker>
-
-  <!-- Stick -->
-  <a-marker type="pattern" url="pattern-stick.patt">
-    <a-entity gltf-model="stick.glb"
-              position="0 0.3 0"
-              rotation="-90 0 0"
-              scale="0.02 0.02 0.02"
-              animation="property: rotation; to: -90 360 0; loop: true; dur: 3000">
-    </a-entity>
-  </a-marker>
-
   <a-entity camera></a-entity>
 </a-scene>
 
 <script>
   let isAVisible = false, isEVisible = false, isDVisible = false;
+  let aeVisible = false;
 
   const markerA = document.querySelector('#markerA');
   const markerE = document.querySelector('#markerE');
@@ -84,6 +69,7 @@
   const modelE = document.querySelector('#modelE');
   const modelA = markerA.querySelector('a-entity');
   const modelD = markerD.querySelector('a-entity');
+  const ae86 = document.querySelector('#ae86');
 
   let lastShowState = false;
   let consecutiveValidFrames = 0;
@@ -107,9 +93,33 @@
       lastShowState = false;
       consecutiveValidFrames = 0;
     }
+
+    if (aeVisible) {
+      ae86.setAttribute('visible', false);
+      aeVisible = false;
+    }
   }
 
   function updateBigA() {
+    if (isAVisible && isEVisible) {
+      const posA = new THREE.Vector3();
+      const posE = new THREE.Vector3();
+      markerA.object3D.getWorldPosition(posA);
+      markerE.object3D.getWorldPosition(posE);
+
+      const midAE = new THREE.Vector3().addVectors(posA, posE).multiplyScalar(0.5);
+      const dirAE = new THREE.Vector3().subVectors(posE, posA);
+      const angleY = Math.atan2(dirAE.x, dirAE.z) * (180 / Math.PI);
+
+      ae86.setAttribute('position', `${midAE.x} ${midAE.y + 0.1} ${midAE.z}`);
+      ae86.setAttribute('rotation', `0 ${angleY} 0`);
+      ae86.setAttribute('visible', true);
+      aeVisible = true;
+    } else if (aeVisible) {
+      ae86.setAttribute('visible', false);
+      aeVisible = false;
+    }
+
     if (!isAVisible || !isEVisible || !isDVisible || lastShowState) return;
 
     const posA = new THREE.Vector3();
@@ -146,6 +156,7 @@
 </script>
 </body>
 </html>
+
 
 
 
