@@ -31,21 +31,15 @@
 
     <!-- AED 合體模型（含點擊區） -->
     <a-entity id="bigA-wrapper" visible="false">
-      <!-- 點擊區 -->
       <a-box id="bigA-hitbox" position="0 0.4 0" depth="1" height="1" width="1"
              opacity="0" transparent="true" class="clickable"></a-box>
-
-      <!-- 模型 -->
-      <a-entity id="bigA"
-                gltf-model="AED.glb"
-                position="0 0.4 0"
-                rotation="0 -90 0"
+      <a-entity id="bigA" gltf-model="AED.glb" position="0 0.4 0" rotation="0 -90 0"
                 scale="0.03 0.03 0.03"
                 animation__float="property: position; dir: alternate; dur: 1000; loop: true; to: 0 0.6 0">
       </a-entity>
     </a-entity>
 
-    <!-- AE86 出現在 A 與 E 中間 -->
+    <!-- AE86 -->
     <a-entity id="ae86" gltf-model="toyota_ae86.glb" position="0 0 0" scale="0.05 0.05 0.05"
               rotation="0 0 0" visible="false" look-at="[camera]"></a-entity>
   </a-marker>
@@ -59,10 +53,7 @@
 
   <!-- R -->
   <a-marker type="pattern" url="pattern-R.patt">
-    <a-entity gltf-model="toyota_ae86.glb"
-              position="0 0.1 -0.5"
-              rotation="-90 0 0"
-              scale="0.5 0.5 0.5"
+    <a-entity gltf-model="toyota_ae86.glb" position="0 0.1 -0.5" rotation="-90 0 0" scale="0.5 0.5 0.5"
               look-at="[camera]"
               animation="property: rotation; to: -90 360 0; loop: true; dur: 2000">
     </a-entity>
@@ -110,12 +101,9 @@
       modelD.setAttribute('visible', true);
       lastShowState = false;
       consecutiveValidFrames = 0;
-
-      // 停止旋轉動畫
       bigA.removeAttribute('animation__spin');
       isRotating = false;
     }
-
     if (aeVisible) {
       ae86.setAttribute('visible', false);
       aeVisible = false;
@@ -152,13 +140,18 @@
     markerE.object3D.getWorldPosition(posE);
     markerD.object3D.getWorldPosition(posD);
 
+    const vecAD = new THREE.Vector3().subVectors(posD, posA);
     const vecAE = new THREE.Vector3().subVectors(posE, posA);
-    const vecED = new THREE.Vector3().subVectors(posD, posE);
-    const dot = vecAE.dot(vecED);
-    const angle = vecAE.angleTo(vecED);
-    const totalDistance = posA.distanceTo(posD);
 
-    const isInOrder = dot > 0 && angle < Math.PI / 4 && totalDistance < 3.0;
+    const angleBetween = vecAD.angleTo(vecAE);
+    const projectionLength = vecAE.dot(vecAD.clone().normalize());
+    const totalLength = vecAD.length();
+
+    const isInOrder =
+      angleBetween < Math.PI / 10 &&
+      projectionLength > 0 &&
+      projectionLength < totalLength &&
+      totalLength < 3.0;
 
     if (isInOrder) {
       consecutiveValidFrames++;
@@ -174,7 +167,6 @@
     }
   }
 
-  // 點擊切換旋轉動畫
   bigAHitbox.addEventListener('click', () => {
     if (!isRotating) {
       bigA.setAttribute('animation__spin', {
@@ -194,6 +186,7 @@
 </script>
 </body>
 </html>
+
 
 
 
