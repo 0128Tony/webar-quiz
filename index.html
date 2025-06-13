@@ -14,18 +14,27 @@
 </head>
 <body>
 <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+  <!-- 預先載入 glb 模型 -->
+  <a-assets>
+    <a-asset-item id="acar" src="Acar.glb"></a-asset-item>
+    <a-asset-item id="ecar" src="Ecar.glb"></a-asset-item>
+    <a-asset-item id="dcar" src="Dcar.glb"></a-asset-item>
+    <a-asset-item id="aed" src="AED.glb"></a-asset-item>
+    <a-asset-item id="ae86model" src="toyota_ae86.glb"></a-asset-item>
+  </a-assets>
+
   <a-entity cursor="rayOrigin: mouse"></a-entity>
 
   <!-- Marker A -->
   <a-marker id="markerA" type="pattern" url="pattern-A.patt">
-    <a-entity gltf-model="Acar.glb" position="0 0.1 0" scale="0.1 0.1 0.1"
+    <a-entity gltf-model="#ae86model" position="0 0.1 0" scale="0.1 0.1 0.1"
               look-at="[camera]"
               animation="property: position; dir: alternate; dur: 1000; loop: true; to: 0 0.3 0"></a-entity>
   </a-marker>
 
   <!-- Marker E -->
   <a-marker id="markerE" type="pattern" url="pattern-E.patt">
-    <a-entity id="modelE" gltf-model="Ecar.glb" position="0 0.1 0" scale="0.1 0.1 0.1"
+    <a-entity id="modelE" gltf-model="#ecar" position="0 0.1 0" scale="0.1 0.1 0.1"
               look-at="[camera]"
               animation="property: position; dir: alternate; dur: 1000; loop: true; to: 0 0.3 0"></a-entity>
 
@@ -33,27 +42,27 @@
     <a-entity id="bigA-wrapper" visible="false">
       <a-box id="bigA-hitbox" position="0 0.4 0" depth="1" height="1" width="1"
              opacity="0" transparent="true" class="clickable"></a-box>
-      <a-entity id="bigA" gltf-model="AED.glb" position="0 0.4 0" rotation="0 -90 0"
+      <a-entity id="bigA" gltf-model="#aed" position="0 0.4 0" rotation="0 -90 0"
                 scale="0.03 0.03 0.03"
                 animation__float="property: position; dir: alternate; dur: 1000; loop: true; to: 0 0.6 0">
       </a-entity>
     </a-entity>
 
     <!-- AE86 -->
-    <a-entity id="ae86" gltf-model="toyota_ae86.glb" position="0 0 0" scale="0.05 0.05 0.05"
+    <a-entity id="ae86" gltf-model="#ae86model" position="0 0 0" scale="0.05 0.05 0.05"
               rotation="0 0 0" visible="false" look-at="[camera]"></a-entity>
   </a-marker>
 
   <!-- Marker D -->
   <a-marker id="markerD" type="pattern" url="pattern-D.patt">
-    <a-entity gltf-model="Dcar.glb" position="0 0.1 0" scale="0.1 0.1 0.1"
+    <a-entity gltf-model="#dcar" position="0 0.1 0" scale="0.1 0.1 0.1"
               look-at="[camera]"
               animation="property: position; dir: alternate; dur: 1000; loop: true; to: 0 0.3 0"></a-entity>
   </a-marker>
 
   <!-- Marker R -->
   <a-marker type="pattern" url="pattern-R.patt">
-    <a-entity gltf-model="toyota_ae86.glb" position="0 0.1 -0.5" rotation="-90 0 0" scale="0.5 0.5 0.5"
+    <a-entity gltf-model="#ae86model" position="0 0.1 -0.5" rotation="-90 0 0" scale="0.5 0.5 0.5"
               look-at="[camera]"
               animation="property: rotation; to: -90 360 0; loop: true; dur: 2000">
     </a-entity>
