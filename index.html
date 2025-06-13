@@ -16,20 +16,20 @@
 <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
   <a-entity cursor="rayOrigin: mouse"></a-entity>
 
-  <!-- A -->
+  <!-- Marker A -->
   <a-marker id="markerA" type="pattern" url="pattern-A.patt">
     <a-entity gltf-model="Acar.glb" position="0 0.1 0" scale="0.1 0.1 0.1"
               look-at="[camera]"
               animation="property: position; dir: alternate; dur: 1000; loop: true; to: 0 0.3 0"></a-entity>
   </a-marker>
 
-  <!-- E -->
+  <!-- Marker E -->
   <a-marker id="markerE" type="pattern" url="pattern-E.patt">
     <a-entity id="modelE" gltf-model="Ecar.glb" position="0 0.1 0" scale="0.1 0.1 0.1"
               look-at="[camera]"
               animation="property: position; dir: alternate; dur: 1000; loop: true; to: 0 0.3 0"></a-entity>
 
-    <!-- AED 合體模型（含點擊區） -->
+    <!-- 合體模型 -->
     <a-entity id="bigA-wrapper" visible="false">
       <a-box id="bigA-hitbox" position="0 0.4 0" depth="1" height="1" width="1"
              opacity="0" transparent="true" class="clickable"></a-box>
@@ -44,14 +44,14 @@
               rotation="0 0 0" visible="false" look-at="[camera]"></a-entity>
   </a-marker>
 
-  <!-- D -->
+  <!-- Marker D -->
   <a-marker id="markerD" type="pattern" url="pattern-D.patt">
     <a-entity gltf-model="Dcar.glb" position="0 0.1 0" scale="0.1 0.1 0.1"
               look-at="[camera]"
               animation="property: position; dir: alternate; dur: 1000; loop: true; to: 0 0.3 0"></a-entity>
   </a-marker>
 
-  <!-- R -->
+  <!-- Marker R -->
   <a-marker type="pattern" url="pattern-R.patt">
     <a-entity gltf-model="toyota_ae86.glb" position="0 0.1 -0.5" rotation="-90 0 0" scale="0.5 0.5 0.5"
               look-at="[camera]"
@@ -132,10 +132,7 @@
 
     if (!isAVisible || !isEVisible || !isDVisible || lastShowState) return;
 
-    const posA = new THREE.Vector3();
-    const posE = new THREE.Vector3();
-    const posD = new THREE.Vector3();
-
+    const posA = new THREE.Vector3(), posE = new THREE.Vector3(), posD = new THREE.Vector3();
     markerA.object3D.getWorldPosition(posA);
     markerE.object3D.getWorldPosition(posE);
     markerD.object3D.getWorldPosition(posD);
@@ -186,6 +183,7 @@
 </script>
 </body>
 </html>
+
 
 
 
